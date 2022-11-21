@@ -109,7 +109,7 @@ namespace server
                     thisClient.Receive(buffer);
 
                     string incomingMessage = Encoding.Default.GetString(buffer);
-                    incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
+                    incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf('\0'));
 
                     if (isPending && ValidUser(incomingMessage))
                     {
