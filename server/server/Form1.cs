@@ -25,7 +25,7 @@ namespace server
         bool listening = false;
         int answerCount = 0;
         int currentQuestion = 0;
-        Dictionary<string, string> answers = new Dictionary<string, string>(); 
+        Dictionary<string, int> answers = new Dictionary<string, int>(); 
 
 
         Questions questions = new Questions("questions.txt");
@@ -80,7 +80,12 @@ namespace server
 
                         // scoreları yazdır
 
-                        messageServer.AppendText("Scores: User 1: User 2:");
+                        messageServer.AppendText("Scores: \n");
+                        foreach(var item in map)
+                        {
+                            messageServer.AppendText(item.Key +": " + item.Value + "\n");
+                        }
+                       
                         // yeni soru yolla  // current question arttır
                         Byte[] buffer = Encoding.Default.GetBytes(questions.askQuestion(currentQuestion++));
                         foreach (Socket client in clientSockets)
@@ -194,7 +199,18 @@ namespace server
                     }
                     else
                     {
-                        messageServer.AppendText(username+": "+ incomingMessage +"\n");
+                        //messageServer.AppendText(username+": "+ incomingMessage +"\n");
+                        int answerNum;
+                        if (Int32.TryParse(incomingMessage, out answerNum)){
+                            answers[username] = answerNum;
+                            answerCount++;
+                        }
+                        else
+                        {
+                            Byte[] errorBuffer = Encoding.Default.GetBytes("Could not parse the answer!\n");
+                            thisClient.Send(errorBuffer);
+                        }
+                        
                     }
                     
                 }
