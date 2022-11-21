@@ -90,7 +90,7 @@ namespace server
 
         private bool ValidUser(string name)
         {
-            if (clientSockets.Count >= 2 || map.ContainsKey(name))
+            if (map.Count >= 2 || map.ContainsKey(name))
             {
                 return false;
             }

@@ -15,3 +15,20 @@ C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\client\client\obj\Debu
 C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\client.pdb
 C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\client.genruntimeconfig.cache
 C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\ref\client.dll
+C:\Users\rebah\Desktop\CS_S03E02\CS 408\CS 408-term project-Fall22\Computer-Networks-Project\client\client\bin\Debug\net6.0-windows\client.exe
+C:\Users\rebah\Desktop\CS_S03E02\CS 408\CS 408-term project-Fall22\Computer-Networks-Project\client\client\bin\Debug\net6.0-windows\client.deps.json
+C:\Users\rebah\Desktop\CS_S03E02\CS 408\CS 408-term project-Fall22\Computer-Networks-Project\client\client\bin\Debug\net6.0-windows\client.runtimeconfig.json
+C:\Users\rebah\Desktop\CS_S03E02\CS 408\CS 408-term project-Fall22\Computer-Networks-Project\client\client\bin\Debug\net6.0-windows\client.dll
+C:\Users\rebah\Desktop\CS_S03E02\CS 408\CS 408-term project-Fall22\Computer-Networks-Project\client\client\bin\Debug\net6.0-windows\client.pdb
+C:\Users\rebah\Desktop\CS_S03E02\CS 408\CS 408-term project-Fall22\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\client.csproj.AssemblyReference.cache
+C:\Users\rebah\Desktop\CS_S03E02\CS 408\CS 408-term project-Fall22\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\client.Form1.resources
+C:\Users\rebah\Desktop\CS_S03E02\CS 408\CS 408-term project-Fall22\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\client.csproj.GenerateResource.cache
+C:\Users\rebah\Desktop\CS_S03E02\CS 408\CS 408-term project-Fall22\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\client.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\rebah\Desktop\CS_S03E02\CS 408\CS 408-term project-Fall22\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\client.AssemblyInfoInputs.cache
+C:\Users\rebah\Desktop\CS_S03E02\CS 408\CS 408-term project-Fall22\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\client.AssemblyInfo.cs
+C:\Users\rebah\Desktop\CS_S03E02\CS 408\CS 408-term project-Fall22\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\client.csproj.CoreCompileInputs.cache
+C:\Users\rebah\Desktop\CS_S03E02\CS 408\CS 408-term project-Fall22\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\client.dll
+C:\Users\rebah\Desktop\CS_S03E02\CS 408\CS 408-term project-Fall22\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\refint\client.dll
+C:\Users\rebah\Desktop\CS_S03E02\CS 408\CS 408-term project-Fall22\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\client.pdb
+C:\Users\rebah\Desktop\CS_S03E02\CS 408\CS 408-term project-Fall22\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\client.genruntimeconfig.cache
+C:\Users\rebah\Desktop\CS_S03E02\CS 408\CS 408-term project-Fall22\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\ref\client.dll
