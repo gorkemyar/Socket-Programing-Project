@@ -28,12 +28,89 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.port = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.questionNumber = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.messageServer = new System.Windows.Forms.RichTextBox();
+            this.start = new System.Windows.Forms.Button();
+            this.SuspendLayout();
+            // 
+            // port
+            // 
+            this.port.Location = new System.Drawing.Point(295, 100);
+            this.port.Name = "port";
+            this.port.Size = new System.Drawing.Size(162, 39);
+            this.port.TabIndex = 0;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(78, 100);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(156, 32);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Port Number:";
+            // 
+            // questionNumber
+            // 
+            this.questionNumber.Location = new System.Drawing.Point(295, 198);
+            this.questionNumber.Name = "questionNumber";
+            this.questionNumber.Size = new System.Drawing.Size(162, 39);
+            this.questionNumber.TabIndex = 2;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(78, 201);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(211, 32);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Question Number:";
+            // 
+            // messageServer
+            // 
+            this.messageServer.Location = new System.Drawing.Point(521, 42);
+            this.messageServer.Name = "messageServer";
+            this.messageServer.Size = new System.Drawing.Size(455, 544);
+            this.messageServer.TabIndex = 4;
+            this.messageServer.Text = "";
+            // 
+            // start
+            // 
+            this.start.Location = new System.Drawing.Point(153, 321);
+            this.start.Name = "start";
+            this.start.Size = new System.Drawing.Size(158, 45);
+            this.start.TabIndex = 5;
+            this.start.Text = "Start";
+            this.start.UseVisualStyleBackColor = true;
+            this.start.Click += new System.EventHandler(this.start_Click);
+            // 
+            // Form1
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1010, 621);
+            this.Controls.Add(this.start);
+            this.Controls.Add(this.messageServer);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.questionNumber);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.port);
+            this.Name = "Form1";
             this.Text = "Form1";
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         #endregion
+
+        private TextBox port;
+        private Label label1;
+        private TextBox questionNumber;
+        private Label label2;
+        private RichTextBox messageServer;
+        private Button start;
     }
 }

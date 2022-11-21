@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\gorke\\source\\repos\\server\\server\\server.csproj": {}
+    "C:\\Users\\gorke\\Documents\\GitHub\\Computer-Networks-Project\\server\\server\\server.csproj": {}
   },
   "projects": {
-    "C:\\Users\\gorke\\source\\repos\\server\\server\\server.csproj": {
+    "C:\\Users\\gorke\\Documents\\GitHub\\Computer-Networks-Project\\server\\server\\server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\gorke\\source\\repos\\server\\server\\server.csproj",
+        "projectUniqueName": "C:\\Users\\gorke\\Documents\\GitHub\\Computer-Networks-Project\\server\\server\\server.csproj",
         "projectName": "server",
-        "projectPath": "C:\\Users\\gorke\\source\\repos\\server\\server\\server.csproj",
+        "projectPath": "C:\\Users\\gorke\\Documents\\GitHub\\Computer-Networks-Project\\server\\server\\server.csproj",
         "packagesPath": "C:\\Users\\gorke\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\gorke\\source\\repos\\server\\server\\obj\\",
+        "outputPath": "C:\\Users\\gorke\\Documents\\GitHub\\Computer-Networks-Project\\server\\server\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\gorke\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -39,6 +39,12 @@
       "frameworks": {
         "net6.0-windows7.0": {
           "targetAlias": "net6.0-windows",
+          "dependencies": {
+            "System.Collections.NonGeneric": {
+              "target": "Package",
+              "version": "[4.3.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
