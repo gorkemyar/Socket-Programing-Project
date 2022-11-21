@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\gorke\\source\\repos\\client\\client\\client.csproj",
+      "projectUniqueName": "C:\\Users\\gorke\\Documents\\GitHub\\Computer-Networks-Project\\client\\client\\client.csproj",
       "projectName": "client",
-      "projectPath": "C:\\Users\\gorke\\source\\repos\\client\\client\\client.csproj",
+      "projectPath": "C:\\Users\\gorke\\Documents\\GitHub\\Computer-Networks-Project\\client\\client\\client.csproj",
       "packagesPath": "C:\\Users\\gorke\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\gorke\\source\\repos\\client\\client\\obj\\",
+      "outputPath": "C:\\Users\\gorke\\Documents\\GitHub\\Computer-Networks-Project\\client\\client\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\gorke\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -1,0 +1,17 @@
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\client\client\bin\Debug\net6.0-windows\client.exe
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\client\client\bin\Debug\net6.0-windows\client.deps.json
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\client\client\bin\Debug\net6.0-windows\client.runtimeconfig.json
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\client\client\bin\Debug\net6.0-windows\client.dll
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\client\client\bin\Debug\net6.0-windows\client.pdb
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\client.csproj.AssemblyReference.cache
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\client.Form1.resources
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\client.csproj.GenerateResource.cache
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\client.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\client.AssemblyInfoInputs.cache
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\client.AssemblyInfo.cs
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\client.csproj.CoreCompileInputs.cache
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\client.dll
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\refint\client.dll
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\client.pdb
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\client.genruntimeconfig.cache
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\client\client\obj\Debug\net6.0-windows\ref\client.dll
