@@ -1,6 +1,7 @@
 {
   "ExpandedNodes": [
     "",
+    "\\client",
     "\\server",
     "\\server\\server"
   ],

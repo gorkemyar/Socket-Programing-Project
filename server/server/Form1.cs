@@ -1,4 +1,4 @@
-using Microsoft.VisualBasic.Logging;
+﻿using Microsoft.VisualBasic.Logging;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,6 +23,12 @@ namespace server
         Dictionary<string, double> map = new Dictionary<string, double>();
         bool terminating = false;
         bool listening = false;
+        int answerCount = 0;
+        int currentQuestion = 0;
+        Dictionary<string, string> answers = new Dictionary<string, string>(); 
+
+
+        Questions questions = new Questions("questions.txt");
         public Form1()
         {
             Control.CheckForIllegalCrossThreadCalls = false;
@@ -47,6 +53,8 @@ namespace server
 
                 Thread acceptThread = new Thread(Accept);
                 acceptThread.Start();
+                Thread questionThread = new Thread(QuestionAndCheck);
+                questionThread.Start();
 
                 messageServer.AppendText("Started listening on port: " + serverPort + "\n");
 
@@ -56,6 +64,54 @@ namespace server
                 messageServer.AppendText("Please check port number \n");
             }
         }
+
+        private void QuestionAndCheck()
+        {
+            
+            while (listening)
+            {
+                if (map.Count == 2)
+                {
+                    if (answerCount == 2)
+                    {
+                        // scorela
+
+
+
+                        // scoreları yazdır
+
+                        messageServer.AppendText("Scores: User 1: User 2:");
+                        // yeni soru yolla  // current question arttır
+                        Byte[] buffer = Encoding.Default.GetBytes(questions.askQuestion(currentQuestion++));
+                        foreach (Socket client in clientSockets)
+                        {
+                            try
+                            {
+                                client.Send(buffer);
+                            }
+                            catch
+                            {
+                                messageServer.AppendText("There is a problem! Check the connection...\n");
+                                terminating = true;
+                                messageServer.Enabled = false;
+                                port.Enabled = true;
+                                start.Enabled = true;
+                                serverSocket.Close();
+                            }
+
+                        }
+
+                        // answer count 0 la
+                        answerCount = 0;
+                       
+
+                    }
+                   
+                    
+                }
+            }
+        }
+
 
         
         private void Accept()
@@ -68,10 +124,12 @@ namespace server
                     
                     clientSockets.Add(newClient);
                     messageServer.AppendText("A client is trying to connected.\n");
-                    //map["deneme"] = 0;
+                   
                     Thread receiveThread = new Thread(() => Receive(newClient)); // updated
                     receiveThread.Start();
                     
+                    
+
                 }
                 catch
                 {
@@ -117,6 +175,11 @@ namespace server
                         username = incomingMessage;
                         map[incomingMessage] = 0;
                         messageServer.AppendText("Client: " + incomingMessage + "\n");
+                        if (map.Count == 2)
+                        {
+                            answerCount = 2; 
+                        }
+
                     }
                     else if (isPending)
                     {
