@@ -1,0 +1,15 @@
+/Users/alperenyildiz/Computer-Networks-Project/questions/bin/Debug/net6.0/questions
+/Users/alperenyildiz/Computer-Networks-Project/questions/bin/Debug/net6.0/questions.deps.json
+/Users/alperenyildiz/Computer-Networks-Project/questions/bin/Debug/net6.0/questions.runtimeconfig.json
+/Users/alperenyildiz/Computer-Networks-Project/questions/bin/Debug/net6.0/questions.dll
+/Users/alperenyildiz/Computer-Networks-Project/questions/bin/Debug/net6.0/questions.pdb
+/Users/alperenyildiz/Computer-Networks-Project/questions/obj/Debug/net6.0/questions.csproj.AssemblyReference.cache
+/Users/alperenyildiz/Computer-Networks-Project/questions/obj/Debug/net6.0/questions.GeneratedMSBuildEditorConfig.editorconfig
+/Users/alperenyildiz/Computer-Networks-Project/questions/obj/Debug/net6.0/questions.AssemblyInfoInputs.cache
+/Users/alperenyildiz/Computer-Networks-Project/questions/obj/Debug/net6.0/questions.AssemblyInfo.cs
+/Users/alperenyildiz/Computer-Networks-Project/questions/obj/Debug/net6.0/questions.csproj.CoreCompileInputs.cache
+/Users/alperenyildiz/Computer-Networks-Project/questions/obj/Debug/net6.0/questions.dll
+/Users/alperenyildiz/Computer-Networks-Project/questions/obj/Debug/net6.0/refint/questions.dll
+/Users/alperenyildiz/Computer-Networks-Project/questions/obj/Debug/net6.0/questions.pdb
+/Users/alperenyildiz/Computer-Networks-Project/questions/obj/Debug/net6.0/questions.genruntimeconfig.cache
+/Users/alperenyildiz/Computer-Networks-Project/questions/obj/Debug/net6.0/ref/questions.dll
