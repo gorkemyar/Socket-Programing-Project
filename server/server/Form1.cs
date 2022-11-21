@@ -24,7 +24,7 @@ namespace server
         bool terminating = false;
         bool listening = false;
         int answerCount = 0;
-        int currentQuestion = 0;
+        int currentQuestion = -1;
         Dictionary<string, int> answers = new Dictionary<string, int>(); 
 
 
@@ -74,20 +74,49 @@ namespace server
                 {
                     if (answerCount == 2)
                     {
-                        // scorela
-
-
-
-                        // scoreları yazdır
-
-                        messageServer.AppendText("Scores: \n");
-                        foreach(var item in map)
+                        // scorela ama ilk sorudan önce scorlama
+                        if(currentQuestion >= 0)
                         {
-                            messageServer.AppendText(item.Key +": " + item.Value + "\n");
+                            int closestAnswer = int.MaxValue;
+                            List<string> winnerList = new List<string>();
+                            foreach (var item in answers)
+                            {
+                                int curr = questions.checkAnswer(currentQuestion, item.Value);
+                                if (curr < closestAnswer)
+                                {
+                                    winnerList = new List<string> { item.Key };
+                                    closestAnswer = curr;
+                                }
+                                else
+                                {
+                                    if (curr == closestAnswer)
+                                    {
+                                        winnerList.Add(item.Key);
+                                    }
+                                }
+
+                            }
+                            foreach (var winner in winnerList)
+                            {
+                                map[winner] += 1.0 / winnerList.Count;
+                            }
+
+
+                            // scoreları yazdır
+
+                            messageServer.AppendText("Scores: \n");
+                            foreach (var item in map)
+                            {
+                                messageServer.AppendText(item.Key + ": " + item.Value + "\n");
+                            }
                         }
-                       
-                        // yeni soru yolla  // current question arttır
-                        Byte[] buffer = Encoding.Default.GetBytes(questions.askQuestion(currentQuestion++));
+
+
+                        
+                        // current question arttır
+                        currentQuestion += 1;
+                        // yeni soru yolla  
+                        Byte[] buffer = Encoding.Default.GetBytes(questions.askQuestion(currentQuestion));
                         foreach (Socket client in clientSockets)
                         {
                             try
@@ -105,6 +134,7 @@ namespace server
                             }
 
                         }
+                        
 
                         // answer count 0 la
                         answerCount = 0;
@@ -203,7 +233,8 @@ namespace server
                         int answerNum;
                         if (Int32.TryParse(incomingMessage, out answerNum)){
                             answers[username] = answerNum;
-                            answerCount++;
+                            Interlocked.Add(ref answerCount, 1);
+
                         }
                         else
                         {

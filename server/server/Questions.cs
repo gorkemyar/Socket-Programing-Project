@@ -29,8 +29,8 @@ class Questions
         return numberToQuestions[getIndex(questionNumber)];
     }
 
-    public bool checkAnswer(int questionNumber, int answer) {
+    public int checkAnswer(int questionNumber, int answer) {
         string question = numberToQuestions[getIndex(questionNumber)];
-        return questionsToAnswers[question] == answer;
+        return Math.Abs(questionsToAnswers[question] - answer);
     }
 }
