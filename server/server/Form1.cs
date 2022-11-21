@@ -57,14 +57,7 @@ namespace server
             }
         }
 
-        private bool ValidUser(string name)
-        {
-            if (clientSockets.Count >= 2 || map.ContainsKey(name))
-            {
-                return false;
-            }
-            return true;
-        }
+        
         private void Accept()
         {
             while (listening)
@@ -74,7 +67,7 @@ namespace server
                     Socket newClient = serverSocket.Accept();
                     
                     clientSockets.Add(newClient);
-                    messageServer.AppendText("A client is trying to connect.\n");
+                    messageServer.AppendText("A client is trying to connected.\n");
                     //map["deneme"] = 0;
                     Thread receiveThread = new Thread(() => Receive(newClient)); // updated
                     receiveThread.Start();
@@ -95,10 +88,19 @@ namespace server
             }
         }
 
+        private bool ValidUser(string name)
+        {
+            if (clientSockets.Count >= 2 || map.ContainsKey(name))
+            {
+                return false;
+            }
+            return true;
+        }
         private void Receive(Socket thisClient) // updated
         {
             bool connected = true;
-
+            bool isPending = true;
+            string username = "";
             while (connected && !terminating)
             {
                 try
@@ -108,7 +110,30 @@ namespace server
 
                     string incomingMessage = Encoding.Default.GetString(buffer);
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
-                    messageServer.AppendText("Client: " + incomingMessage + "\n");
+
+                    if (isPending && ValidUser(incomingMessage))
+                    {
+                        isPending = false;
+                        username = incomingMessage;
+                        map[incomingMessage] = 0;
+                        messageServer.AppendText("Client: " + incomingMessage + "\n");
+                    }
+                    else if (isPending)
+                    {
+                        if (!terminating)
+                        {
+                            messageServer.AppendText("A client has disconnected\n");
+                        }
+                        thisClient.Close();
+                        clientSockets.Remove(thisClient);
+                        connected = false;
+                        isPending = false;
+                    }
+                    else
+                    {
+                        messageServer.AppendText(username+": "+ incomingMessage +"\n");
+                    }
+                    
                 }
                 catch
                 {
