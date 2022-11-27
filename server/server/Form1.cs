@@ -24,8 +24,10 @@ namespace server
         Dictionary<string, double> map = new Dictionary<string, double>();
         bool terminating = false;
         bool listening = false;
+
         int answerCount = 0;
-        int currentQuestion = -1;
+        int currentQuestion = 0;
+
         Dictionary<string, int> answers = new Dictionary<string, int>(); 
 
 
@@ -70,17 +72,27 @@ namespace server
 
         private void QuestionAndCheck(int numberOfQuestions)
         {
-            
-            while (listening)
+            bool questionAsked = false;
+            while (listening & currentQuestion < numberOfQuestions)
             {
                 if (map.Count == 2)
                 {
                     if (answerCount == 2)
                     {
-
-                        // scorela ama ilk sorudan önce scorlama
-                        if(currentQuestion >= 0 && currentQuestion < numberOfQuestions)
+                        
+                        // yeni soru yolla  
+                        if (!questionAsked)
                         {
+                            string newQuestion = questions.askQuestion(currentQuestion) + "\n";
+                            messageServer.AppendText(newQuestion);
+                            broadCast(newQuestion);
+                            questionAsked = true;
+
+                            // answer count = 0
+                            answerCount = 0;
+                        }
+                        else
+                        {  
                             int closestAnswer = int.MaxValue;
                             List<string> winnerList = new List<string>();
                             foreach (var item in answers)
@@ -108,45 +120,37 @@ namespace server
 
                             // scoreları yazdır
 
-                            string scores = numberOfQuestions-1 != currentQuestion ? "Scores: \n" : "Final Scores:";
-                            var ordered = map.OrderBy(x => -1*x.Value).ToDictionary(x => x.Key, x => x.Value);
+                            string scores = numberOfQuestions - 1 != currentQuestion ? "Scores: \n" : "Final Scores: ";
+                            var ordered = map.OrderBy(x => -1 * x.Value).ToDictionary(x => x.Key, x => x.Value);
                             foreach (var item in ordered)
                             {
-                                scores += item.Key + ": " + item.Value +" ";
+                                scores += item.Key + ": " + item.Value + " ";
                             }
                             scores += "\n";
                             messageServer.AppendText(scores);
                             broadCast(scores);
-
-
+                            
+                            questionAsked = false;
+                            currentQuestion += 1;
                         }
-                        else if (numberOfQuestions - 1 == currentQuestion)
-                        {
-
-                            foreach (var client in clientSockets)
-                            {
-                                client.Close();
-                            }
-
-                            //terminating = true;
-                            clientSockets.Clear();
-                        }
-
-                        // current question arttır
-                        currentQuestion += 1;
-                        // yeni soru yolla  
-                        string newQuestion = questions.askQuestion(currentQuestion) + "\n";
-                        messageServer.AppendText(newQuestion);
-                        broadCast(newQuestion);
-
-                        // answer count 0 la
-                        answerCount = 0;
-
+                        // scorela ama ilk sorudan önce scorlama
                     }
                                       
                 }
             }
+            foreach(var client in clientSockets)
+            {
+                client.Close();
+            }
+            Console.WriteLine("Deneme");
+            clientSockets.Clear();
+            map.Clear();
+            answers.Clear();
+            currentQuestion = 0;
+            answerCount = 0;
+            
         }
+
 
 
         
