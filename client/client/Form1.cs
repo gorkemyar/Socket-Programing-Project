@@ -68,7 +68,7 @@ namespace client
                     string incomingMessage = Encoding.Default.GetString(buffer);
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf('\0'));
 
-                    if (incomingMessage.Contains("SUCCESSFUL"))
+                    if (incomingMessage.Contains("Final"))
                     {
                         messageBox.AppendText("The game is finished: " + incomingMessage + "\n");
                         connected = false;
@@ -76,7 +76,7 @@ namespace client
                     }
                     else if (incomingMessage.Length > 1)
                     {
-                        messageBox.AppendText("Question: " + incomingMessage + "\n");
+                        messageBox.AppendText(incomingMessage + "\n");
                         answerBox.Enabled = true;
                         send.Enabled = true;
                     }
@@ -87,7 +87,6 @@ namespace client
                     {
                         messageBox.AppendText("The server has disconnected\n");
                         connect.Enabled = true;
-                        messageBox.Enabled = false;
                     }
 
                     clientSocket.Close();
@@ -112,7 +111,5 @@ namespace client
             terminating = true;
             Environment.Exit(0);
         }
-
-        
     }
 }
