@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace server
 {
@@ -40,8 +41,10 @@ namespace server
         private void start_Click(object sender, EventArgs e)
         {
             int serverPort;
+            int numberOfQuestions;
 
-            if (Int32.TryParse(port.Text, out serverPort))
+
+            if (Int32.TryParse(port.Text, out serverPort) && Int32.TryParse(questionNumber.Text, out numberOfQuestions))
             {
                 IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, serverPort);
                 serverSocket.Bind(endPoint);
@@ -53,7 +56,7 @@ namespace server
 
                 Thread acceptThread = new Thread(Accept);
                 acceptThread.Start();
-                Thread questionThread = new Thread(QuestionAndCheck);
+                Thread questionThread = new Thread(() => { QuestionAndCheck(numberOfQuestions); });
                 questionThread.Start();
 
                 messageServer.AppendText("Started listening on port: " + serverPort + "\n");
@@ -61,11 +64,11 @@ namespace server
             }
             else
             {
-                messageServer.AppendText("Please check port number \n");
+                messageServer.AppendText("Please check port number and number of questions!! \n");
             }
         }
 
-        private void QuestionAndCheck()
+        private void QuestionAndCheck(int numberOfQuestions)
         {
             
             while (listening)
@@ -74,8 +77,9 @@ namespace server
                 {
                     if (answerCount == 2)
                     {
+
                         // scorela ama ilk sorudan önce scorlama
-                        if(currentQuestion >= 0)
+                        if(currentQuestion >= 0 && currentQuestion < numberOfQuestions)
                         {
                             int closestAnswer = int.MaxValue;
                             List<string> winnerList = new List<string>();
@@ -104,45 +108,42 @@ namespace server
 
                             // scoreları yazdır
 
-                            messageServer.AppendText("Scores: \n");
-                            foreach (var item in map)
+                            string scores = numberOfQuestions-1 != currentQuestion ? "Scores: \n" : "Final Scores:";
+                            var ordered = map.OrderBy(x => -1*x.Value).ToDictionary(x => x.Key, x => x.Value);
+                            foreach (var item in ordered)
                             {
-                                messageServer.AppendText(item.Key + ": " + item.Value + "\n");
+                                scores += item.Key + ": " + item.Value +" ";
                             }
+                            scores += "\n";
+                            messageServer.AppendText(scores);
+                            broadCast(scores);
+
+
+                        }
+                        else if (numberOfQuestions - 1 == currentQuestion)
+                        {
+
+                            foreach (var client in clientSockets)
+                            {
+                                client.Close();
+                            }
+
+                            //terminating = true;
+                            clientSockets.Clear();
                         }
 
-
-                        
                         // current question arttır
                         currentQuestion += 1;
                         // yeni soru yolla  
-                        Byte[] buffer = Encoding.Default.GetBytes(questions.askQuestion(currentQuestion));
-                        foreach (Socket client in clientSockets)
-                        {
-                            try
-                            {
-                                client.Send(buffer);
-                            }
-                            catch
-                            {
-                                messageServer.AppendText("There is a problem! Check the connection...\n");
-                                terminating = true;
-                                messageServer.Enabled = false;
-                                port.Enabled = true;
-                                start.Enabled = true;
-                                serverSocket.Close();
-                            }
-
-                        }
-                        
+                        string newQuestion = questions.askQuestion(currentQuestion) + "\n";
+                        messageServer.AppendText(newQuestion);
+                        broadCast(newQuestion);
 
                         // answer count 0 la
                         answerCount = 0;
-                       
 
                     }
-                   
-                    
+                                      
                 }
             }
         }
@@ -158,13 +159,10 @@ namespace server
                     Socket newClient = serverSocket.Accept();
                     
                     clientSockets.Add(newClient);
-                    messageServer.AppendText("A client is trying to connected.\n");
+                    //messageServer.AppendText("A client is trying to connected.\n");
                    
                     Thread receiveThread = new Thread(() => Receive(newClient)); // updated
                     receiveThread.Start();
-                    
-                    
-
                 }
                 catch
                 {
@@ -209,7 +207,7 @@ namespace server
                         isPending = false;
                         username = incomingMessage;
                         map[incomingMessage] = 0;
-                        messageServer.AppendText("Client: " + incomingMessage + "\n");
+                        messageServer.AppendText("Client " + incomingMessage + " is connected!\n");
                         if (map.Count == 2)
                         {
                             answerCount = 2; 
@@ -263,5 +261,28 @@ namespace server
             terminating = true;
             Environment.Exit(0);
         }
+
+        private void broadCast(string message)
+        {
+            Byte[] buffer = Encoding.Default.GetBytes(message);
+            foreach (Socket client in clientSockets)
+            {
+                try
+                {
+                    client.Send(buffer);
+                }
+                catch
+                {
+                    messageServer.AppendText("There is a problem! Check the connection...\n");
+                    terminating = true;
+                    messageServer.Enabled = false;
+                    port.Enabled = true;
+                    start.Enabled = true;
+                    serverSocket.Close();
+                }
+
+            }
+        }
     }
 }
+
