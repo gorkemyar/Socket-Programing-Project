@@ -86,7 +86,7 @@ namespace server
         private void QuestionAndCheck(int numberOfQuestions)
         {
             bool questionAsked = false; // currently there is not any question asked.
-            while (listening & currentQuestion < numberOfQuestions && eligiblityForQuestions)
+            while (listening && currentQuestion < numberOfQuestions && eligiblityForQuestions)
             {
                 if (answerCount == 2)
                 {    
@@ -122,10 +122,17 @@ namespace server
             if(!eligiblityForQuestions)
             {
                 messageServer.AppendText("At least one of the clients has disconnected!\nGame Ends!\n");
+                foreach(var user in map)
+                {
+                    messageServer.AppendText("Winner is: " + user.Key + "\n");
+
+                }
+                broadCast("winner winner chicken dinner");
+
             }
-            broadCast("disconnect");
             foreach(var client in clientSockets)
             {
+                
                 client.Close();
             }
             
@@ -215,7 +222,6 @@ namespace server
                             answerCount = 2;
                             
                             messageServer.AppendText("New game has started!\n");
-                            broadCast(questionNumber.ToString());
                             Thread questionThread = new Thread(() => { QuestionAndCheck(questionNumber); });
                             questionThread.Start();
                             eligiblityForQuestions = true;
