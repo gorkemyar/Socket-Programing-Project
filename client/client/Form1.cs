@@ -24,6 +24,7 @@ namespace client
 
         private void connect_Click(object sender, EventArgs e)
         {
+            
             clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             string IP = ip.Text;
 
@@ -32,6 +33,7 @@ namespace client
             {
                 try
                 {
+                    disconnect.Enabled = true;
                     clientSocket.Connect(IP, portNum);
                     connect.Enabled = false;
                     messageBox.Enabled = true;
@@ -51,6 +53,7 @@ namespace client
                 catch
                 {
                     messageBox.AppendText("Could not connect to the server!\n");
+                    disconnect.Enabled = false;
                 }
             }
             else
@@ -87,6 +90,7 @@ namespace client
                         connected = false;
                         terminating = true;
                         connect.Enabled = true;
+                        disconnect.Enabled = false;
 
                     } else if (incomingMessage.Contains("the server is already full"))
                     {
@@ -95,6 +99,7 @@ namespace client
                         connected = false;
                         terminating = true;
                         connect.Enabled = true;
+                        disconnect.Enabled = false;
                     }
                     else if (incomingMessage.Contains("Final"))
                     {
@@ -103,14 +108,16 @@ namespace client
                         connected = false;
                         terminating = true;
                         connect.Enabled = true;
+                        disconnect.Enabled = false;
                     }
                     else if (incomingMessage.Contains("disconnect"))
                     {
-                        messageBox.AppendText("The game is terminated. A client may drop.\n");
+                        messageBox.AppendText("The game is terminated. A client or server may drop.\n");
                         clientSocket.Close();
                         connected = false;
                         terminating = true;
                         connect.Enabled = true;
+                        disconnect.Enabled = false;
                     }
                     else if (incomingMessage.Length > 1)
                     {
@@ -148,6 +155,17 @@ namespace client
             connected = false;
             terminating = true;
             Environment.Exit(0);
+        }
+
+        private void disconnect_Click(object sender, EventArgs e)
+        {
+            connect.Enabled = true;
+            disconnect.Enabled = false;
+            messageBox.AppendText("Disconnected from the Server!\n");
+            clientSocket.Close();
+            connected = false;
+            terminating = true;
+
         }
     }
 }

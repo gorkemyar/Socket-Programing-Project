@@ -39,6 +39,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.answerBox = new System.Windows.Forms.TextBox();
             this.send = new System.Windows.Forms.Button();
+            this.disconnect = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -100,7 +101,7 @@
             // 
             // connect
             // 
-            this.connect.Location = new System.Drawing.Point(132, 268);
+            this.connect.Location = new System.Drawing.Point(70, 268);
             this.connect.Name = "connect";
             this.connect.Size = new System.Drawing.Size(161, 39);
             this.connect.TabIndex = 7;
@@ -136,11 +137,23 @@
             this.send.UseVisualStyleBackColor = true;
             this.send.Click += new System.EventHandler(this.send_Click);
             // 
+            // disconnect
+            // 
+            this.disconnect.Enabled = false;
+            this.disconnect.Location = new System.Drawing.Point(259, 268);
+            this.disconnect.Name = "disconnect";
+            this.disconnect.Size = new System.Drawing.Size(156, 39);
+            this.disconnect.TabIndex = 11;
+            this.disconnect.Text = "Disconnect";
+            this.disconnect.UseVisualStyleBackColor = true;
+            this.disconnect.Click += new System.EventHandler(this.disconnect_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(939, 790);
+            this.Controls.Add(this.disconnect);
             this.Controls.Add(this.send);
             this.Controls.Add(this.answerBox);
             this.Controls.Add(this.label4);
@@ -172,5 +185,6 @@
         private Label label4;
         private TextBox answerBox;
         private Button send;
+        private Button disconnect;
     }
 }

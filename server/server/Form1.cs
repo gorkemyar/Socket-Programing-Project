@@ -285,6 +285,9 @@ namespace server
                     }
                     thisClient.Close();
                     clientSockets.Remove(thisClient);
+                    map.Remove(username);
+                    answers.Remove(username);
+
                     connected = false;
                     questionAsking = false;
                 }
