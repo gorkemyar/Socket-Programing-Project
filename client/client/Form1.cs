@@ -104,6 +104,14 @@ namespace client
                         terminating = true;
                         connect.Enabled = true;
                     }
+                    else if (incomingMessage.Contains("disconnect"))
+                    {
+                        messageBox.AppendText("The game is terminated. A client may drop.\n");
+                        clientSocket.Close();
+                        connected = false;
+                        terminating = true;
+                        connect.Enabled = true;
+                    }
                     else if (incomingMessage.Length > 1)
                     {
                         messageBox.AppendText(incomingMessage + "\n");

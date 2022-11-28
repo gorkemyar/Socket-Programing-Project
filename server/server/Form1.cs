@@ -148,7 +148,7 @@ namespace server
             {
                 messageServer.AppendText("At least one of the clients has disconnected!\nGame Ends!\n");
             }
-
+            broadCast("disconnect");
             foreach(var client in clientSockets)
             {
                 client.Close();
@@ -160,12 +160,13 @@ namespace server
             currentQuestion = 0;
             answerCount = 0;
             
-            //start.Enabled = true;
-            //listening = false;
+            start.Enabled = true;
+            listening = false;
             //terminating = true;
             //serverSocket.Disconnect(true);
             //serverSocket.Shutdown(SocketShutdown.Receive);
-            //serverSocket.Close();
+            serverSocket.Close();
+            serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
         }
 
@@ -293,6 +294,7 @@ namespace server
         {
             listening = false;
             terminating = true;
+            broadCast("disconnect");
             Environment.Exit(0);
         }
 
