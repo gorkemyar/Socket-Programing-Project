@@ -22,6 +22,8 @@ namespace client
             InitializeComponent();
         }
 
+
+        // Connect to a server
         private void connect_Click(object sender, EventArgs e)
         {
             
@@ -40,12 +42,12 @@ namespace client
                     connected = true;
                     
 
-
+                    // send username
                     string sendingMessage = username.Text;
                     Byte[] buffer = Encoding.Default.GetBytes(sendingMessage);
-                    //message.AppendText("Message Sent: " + sendingMessage + "\n");
                     clientSocket.Send(buffer);
 
+                    // start a new thread to receive messages
                     Thread receiveThread = new Thread(Receive);
                     receiveThread.Start();
 
@@ -61,6 +63,8 @@ namespace client
                 messageBox.AppendText("Check the port\n");
             }
         }
+
+        // Receive messages from server
         private void Receive()
         {
             while (connected)
@@ -74,16 +78,16 @@ namespace client
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf('\0'));
 
 
-                    if (Int32.TryParse(incomingMessage, out numberOfQuestions))
+                    if (Int32.TryParse(incomingMessage, out numberOfQuestions)) // get question numbers
                     {
                         continue;
 
-                    } else if (incomingMessage.Contains("connected to the server")){
+                    } else if (incomingMessage.Contains("connected to the server")){ // connection is established
 
                         messageBox.Clear();
                         messageBox.AppendText("Connected to the Server!\n");
 
-                    } else if (incomingMessage.Contains("not valid username")) {
+                    } else if (incomingMessage.Contains("not valid username")) { // not a valid user
 
                         messageBox.AppendText("Already, used user name!\n");
                         clientSocket.Close();
@@ -92,7 +96,7 @@ namespace client
                         connect.Enabled = true;
                         disconnect.Enabled = false;
 
-                    } else if (incomingMessage.Contains("the server is already full"))
+                    } else if (incomingMessage.Contains("the server is already full")) // if server is full already
                     {
                         messageBox.AppendText("The game is already full!\n");
                         clientSocket.Close();
@@ -101,7 +105,7 @@ namespace client
                         connect.Enabled = true;
                         disconnect.Enabled = false;
                     }
-                    else if (incomingMessage.Contains("Final"))
+                    else if (incomingMessage.Contains("Final")) // if the game succesfully completed
                     {
                         messageBox.AppendText("The game is finished. " + incomingMessage + "\n");
                         clientSocket.Close();
@@ -110,7 +114,7 @@ namespace client
                         connect.Enabled = true;
                         disconnect.Enabled = false;
                     }
-                    else if (incomingMessage.Contains("disconnect"))
+                    else if (incomingMessage.Contains("disconnect")) // if game interrupted
                     {
                         messageBox.AppendText("The game is terminated. A client or server may drop.\n");
                         clientSocket.Close();
@@ -119,14 +123,14 @@ namespace client
                         connect.Enabled = true;
                         disconnect.Enabled = false;
                     }
-                    else if (incomingMessage.Length > 1)
+                    else if (incomingMessage.Length > 1) // any other messages
                     {
                         messageBox.AppendText(incomingMessage + "\n");
                         answerBox.Enabled = true;
                         send.Enabled = true;
                     }
                 }
-                catch
+                catch // if something goes wrong
                 {
                     if (!terminating)
                     {
@@ -141,6 +145,7 @@ namespace client
             }
         }
 
+        // Send answers to the server
         private void send_Click(object sender, EventArgs e)
         {
             send.Enabled = false;
@@ -150,6 +155,8 @@ namespace client
             messageBox.AppendText("Answer Sent: " + sendingMessage + "\n");
             clientSocket.Send(buffer); 
         }
+
+        // Close application
         private void Form1_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             connected = false;
@@ -157,6 +164,7 @@ namespace client
             Environment.Exit(0);
         }
 
+        // Disconnect from the server
         private void disconnect_Click(object sender, EventArgs e)
         {
             connect.Enabled = true;
