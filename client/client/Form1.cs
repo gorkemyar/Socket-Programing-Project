@@ -78,14 +78,21 @@ namespace client
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf('\0'));
 
 
-                    if (Int32.TryParse(incomingMessage, out numberOfQuestions)) // get question numbers
+                    if (incomingMessage.Contains("winner winner chicken dinner")) // get question numbers
                     {
-                        continue;
+                        messageBox.AppendText("Other user is disconnected, You are the winner!");
+                        clientSocket.Close();
+                        connected = false;
+                        terminating = true;
+                        connect.Enabled = true;
+                        disconnect.Enabled = false;
+                        send.Enabled = false;
 
                     } else if (incomingMessage.Contains("connected to the server")){ // connection is established
 
                         messageBox.Clear();
                         messageBox.AppendText("Connected to the Server!\n");
+                        send.Enabled = true;
 
                     } else if (incomingMessage.Contains("not valid username")) { // not a valid user
 
@@ -95,6 +102,7 @@ namespace client
                         terminating = true;
                         connect.Enabled = true;
                         disconnect.Enabled = false;
+                        send.Enabled = false;
 
                     } else if (incomingMessage.Contains("the server is already full")) // if server is full already
                     {
@@ -104,6 +112,7 @@ namespace client
                         terminating = true;
                         connect.Enabled = true;
                         disconnect.Enabled = false;
+                        send.Enabled = false;
                     }
                     else if (incomingMessage.Contains("Final")) // if the game succesfully completed
                     {
@@ -113,6 +122,7 @@ namespace client
                         terminating = true;
                         connect.Enabled = true;
                         disconnect.Enabled = false;
+                        send.Enabled = false;
                     }
                     else if (incomingMessage.Contains("disconnect")) // if game interrupted
                     {
@@ -122,6 +132,7 @@ namespace client
                         terminating = true;
                         connect.Enabled = true;
                         disconnect.Enabled = false;
+                        send.Enabled = false;
                     }
                     else if (incomingMessage.Length > 1) // any other messages
                     {
@@ -173,6 +184,7 @@ namespace client
             clientSocket.Close();
             connected = false;
             terminating = true;
+            send.Enabled=false;
 
         }
     }
