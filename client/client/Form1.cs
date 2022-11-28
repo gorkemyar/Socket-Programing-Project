@@ -13,6 +13,8 @@ namespace client
         bool terminating = false;
         bool connected = false;
         Socket clientSocket;
+
+        int numberOfQuestions;
         public Form1()
         {
             Control.CheckForIllegalCrossThreadCalls = false;
@@ -34,7 +36,7 @@ namespace client
                     connect.Enabled = false;
                     messageBox.Enabled = true;
                     connected = true;
-                    messageBox.AppendText("Connected to the server!\n");
+                    
 
 
                     string sendingMessage = username.Text;
@@ -68,11 +70,39 @@ namespace client
                     string incomingMessage = Encoding.Default.GetString(buffer);
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf('\0'));
 
-                    if (incomingMessage.Contains("Final"))
+
+                    if (Int32.TryParse(incomingMessage, out numberOfQuestions))
                     {
-                        messageBox.AppendText("The game is finished: " + incomingMessage + "\n");
+                        continue;
+
+                    } else if (incomingMessage.Contains("connected to the server")){
+
+                        messageBox.Clear();
+                        messageBox.AppendText("Connected to the Server!\n");
+
+                    } else if (incomingMessage.Contains("not valid username")) {
+
+                        messageBox.AppendText("Already, used user name!\n");
+                        clientSocket.Close();
                         connected = false;
                         terminating = true;
+                        connect.Enabled = true;
+
+                    } else if (incomingMessage.Contains("the server is already full"))
+                    {
+                        messageBox.AppendText("The game is already full!\n");
+                        clientSocket.Close();
+                        connected = false;
+                        terminating = true;
+                        connect.Enabled = true;
+                    }
+                    else if (incomingMessage.Contains("Final"))
+                    {
+                        messageBox.AppendText("The game is finished. " + incomingMessage + "\n");
+                        clientSocket.Close();
+                        connected = false;
+                        terminating = true;
+                        connect.Enabled = true;
                     }
                     else if (incomingMessage.Length > 1)
                     {

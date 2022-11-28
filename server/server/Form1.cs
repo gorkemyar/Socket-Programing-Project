@@ -22,11 +22,16 @@ namespace server
         Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         List<Socket> clientSockets = new List<Socket>();
         Dictionary<string, double> map = new Dictionary<string, double>();
+
+
         bool terminating = false;
         bool listening = false;
 
+        bool questionAsking = false;
+
         int answerCount = 0;
         int currentQuestion = 0;
+
 
         Dictionary<string, int> answers = new Dictionary<string, int>(); 
 
@@ -45,24 +50,27 @@ namespace server
             int serverPort;
             int numberOfQuestions;
 
+            messageServer.Clear();
+            
 
             if (Int32.TryParse(port.Text, out serverPort) && Int32.TryParse(questionNumber.Text, out numberOfQuestions))
             {
                 IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, serverPort);
+                //serverSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                
                 serverSocket.Bind(endPoint);
+                
                 serverSocket.Listen(3);
 
                 listening = true;
                 start.Enabled = false;
                 messageServer.Enabled = true;
 
-                Thread acceptThread = new Thread(Accept);
-                acceptThread.Start();
-                Thread questionThread = new Thread(() => { QuestionAndCheck(numberOfQuestions); });
-                questionThread.Start();
-
                 messageServer.AppendText("Started listening on port: " + serverPort + "\n");
 
+                Thread acceptThread = new Thread(()=> { Accept(numberOfQuestions);});
+                acceptThread.Start();
+                
             }
             else
             {
@@ -73,88 +81,96 @@ namespace server
         private void QuestionAndCheck(int numberOfQuestions)
         {
             bool questionAsked = false;
-            while (listening & currentQuestion < numberOfQuestions)
+            while (listening & currentQuestion < numberOfQuestions && questionAsking)
             {
-                if (map.Count == 2)
+                if (answerCount == 2)
                 {
-                    if (answerCount == 2)
-                    {
                         
-                        // yeni soru yolla  
-                        if (!questionAsked)
-                        {
-                            string newQuestion = questions.askQuestion(currentQuestion) + "\n";
-                            messageServer.AppendText(newQuestion);
-                            broadCast(newQuestion);
-                            questionAsked = true;
+                    // yeni soru yolla  
+                    if (!questionAsked)
+                    {
+                        string newQuestion = questions.askQuestion(currentQuestion) + "\n";
+                        messageServer.AppendText(newQuestion);
+                        broadCast(newQuestion);
+                        questionAsked = true;
 
-                            // answer count = 0
-                            answerCount = 0;
-                        }
-                        else
-                        {  
-                            int closestAnswer = int.MaxValue;
-                            List<string> winnerList = new List<string>();
-                            foreach (var item in answers)
-                            {
-                                int curr = questions.checkAnswer(currentQuestion, item.Value);
-                                if (curr < closestAnswer)
-                                {
-                                    winnerList = new List<string> { item.Key };
-                                    closestAnswer = curr;
-                                }
-                                else
-                                {
-                                    if (curr == closestAnswer)
-                                    {
-                                        winnerList.Add(item.Key);
-                                    }
-                                }
-
-                            }
-                            foreach (var winner in winnerList)
-                            {
-                                map[winner] += 1.0 / winnerList.Count;
-                            }
-
-
-                            // scoreları yazdır
-
-                            string scores = numberOfQuestions - 1 != currentQuestion ? "Scores: \n" : "Final Scores: ";
-                            var ordered = map.OrderBy(x => -1 * x.Value).ToDictionary(x => x.Key, x => x.Value);
-                            foreach (var item in ordered)
-                            {
-                                scores += item.Key + ": " + item.Value + " ";
-                            }
-                            scores += "\n";
-                            messageServer.AppendText(scores);
-                            broadCast(scores);
-                            
-                            questionAsked = false;
-                            currentQuestion += 1;
-                        }
-                        // scorela ama ilk sorudan önce scorlama
+                        // answer count = 0
+                        answerCount = 0;
                     }
-                                      
+                    else
+                    {  
+                        int closestAnswer = int.MaxValue;
+                        List<string> winnerList = new List<string>();
+                        foreach (var item in answers)
+                        {
+                            int curr = questions.checkAnswer(currentQuestion, item.Value);
+                            if (curr < closestAnswer)
+                            {
+                                winnerList = new List<string> { item.Key };
+                                closestAnswer = curr;
+                            }
+                            else
+                            {
+                                if (curr == closestAnswer)
+                                {
+                                    winnerList.Add(item.Key);
+                                }
+                            }
+
+                        }
+                        foreach (var winner in winnerList)
+                        {
+                            map[winner] += 1.0 / winnerList.Count;
+                        }
+
+
+                        // scoreları yazdır
+
+                        string scores = numberOfQuestions - 1 != currentQuestion ? "Scores: \n" : "Final Scores: ";
+                        var ordered = map.OrderBy(x => -1 * x.Value).ToDictionary(x => x.Key, x => x.Value);
+                        foreach (var item in ordered)
+                        {
+                            scores += item.Key + ": " + item.Value + " ";
+                        }
+                        scores += "\n";
+                        messageServer.AppendText(scores);
+                        broadCast(scores);
+                            
+                        questionAsked = false;
+                        currentQuestion += 1;
+                    }
+                    // scorela ama ilk sorudan önce scorlama
                 }
+                                       
             }
+
+            if(!questionAsking)
+            {
+                messageServer.AppendText("At least one of the clients has disconnected!\nGame Ends!\n");
+            }
+
             foreach(var client in clientSockets)
             {
                 client.Close();
             }
-            Console.WriteLine("Deneme");
+            
             clientSockets.Clear();
             map.Clear();
             answers.Clear();
             currentQuestion = 0;
             answerCount = 0;
             
+            //start.Enabled = true;
+            //listening = false;
+            //terminating = true;
+            //serverSocket.Disconnect(true);
+            //serverSocket.Shutdown(SocketShutdown.Receive);
+            //serverSocket.Close();
+
         }
 
-
-
         
-        private void Accept()
+        private void Accept(int questionNumber)
         {
             while (listening)
             {
@@ -165,7 +181,7 @@ namespace server
                     clientSockets.Add(newClient);
                     //messageServer.AppendText("A client is trying to connected.\n");
                    
-                    Thread receiveThread = new Thread(() => Receive(newClient)); // updated
+                    Thread receiveThread = new Thread(() => Receive(newClient, questionNumber)); // updated
                     receiveThread.Start();
                 }
                 catch
@@ -191,7 +207,7 @@ namespace server
             }
             return true;
         }
-        private void Receive(Socket thisClient) // updated
+        private void Receive(Socket thisClient, int questionNumber) // updated
         {
             bool connected = true;
             bool isPending = true;
@@ -211,19 +227,32 @@ namespace server
                         isPending = false;
                         username = incomingMessage;
                         map[incomingMessage] = 0;
+                        sendMessage(thisClient, "connected to the server");
                         messageServer.AppendText("Client " + incomingMessage + " is connected!\n");
+                        
                         if (map.Count == 2)
                         {
-                            answerCount = 2; 
+                            answerCount = 2;
+                            messageServer.Clear();
+                            messageServer.AppendText("New game has started!\n");
+                            broadCast(questionNumber.ToString());
+                            Thread questionThread = new Thread(() => { QuestionAndCheck(questionNumber); });
+                            questionThread.Start();
+                            questionAsking = true;
                         }
 
                     }
                     else if (isPending)
                     {
-                        if (!terminating)
+                        if (map.Count >= 2)
                         {
-                            messageServer.AppendText("A client has disconnected\n");
+                            sendMessage(thisClient, "the server is already full\n");
                         }
+                        else
+                        {
+                            sendMessage(thisClient, "not valid username\n");
+                        }
+                        
                         thisClient.Close();
                         clientSockets.Remove(thisClient);
                         connected = false;
@@ -256,6 +285,7 @@ namespace server
                     thisClient.Close();
                     clientSockets.Remove(thisClient);
                     connected = false;
+                    questionAsking = false;
                 }
             }
         }
@@ -286,6 +316,11 @@ namespace server
                 }
 
             }
+        }
+        private void sendMessage(Socket socket ,string message)
+        {
+            Byte[] buffer = Encoding.Default.GetBytes(message);
+            socket.Send(buffer);
         }
     }
 }
