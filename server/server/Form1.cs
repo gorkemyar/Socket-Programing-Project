@@ -252,6 +252,7 @@ namespace server
                         int answerNum;
                         if (Int32.TryParse(incomingMessage, out answerNum)){
                             answers[username] = answerNum;
+                            messageServer.AppendText(username+": "+ answerNum +"\n");
                             // lock for answer count, basically it is a mutex
                             Interlocked.Add(ref answerCount, 1);
                         }
