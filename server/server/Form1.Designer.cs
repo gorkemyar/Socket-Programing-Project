@@ -34,6 +34,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.messageServer = new System.Windows.Forms.RichTextBox();
             this.start = new System.Windows.Forms.Button();
+            this.startGame = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // port
@@ -78,19 +79,31 @@
             // 
             // start
             // 
-            this.start.Location = new System.Drawing.Point(153, 321);
+            this.start.Location = new System.Drawing.Point(76, 305);
             this.start.Name = "start";
             this.start.Size = new System.Drawing.Size(158, 45);
             this.start.TabIndex = 5;
-            this.start.Text = "Start";
+            this.start.Text = "Start Server";
             this.start.UseVisualStyleBackColor = true;
             this.start.Click += new System.EventHandler(this.start_Click);
+            // 
+            // startGame
+            // 
+            this.startGame.Enabled = false;
+            this.startGame.Location = new System.Drawing.Point(282, 305);
+            this.startGame.Name = "startGame";
+            this.startGame.Size = new System.Drawing.Size(175, 45);
+            this.startGame.TabIndex = 6;
+            this.startGame.Text = "Start Game";
+            this.startGame.UseVisualStyleBackColor = true;
+            this.startGame.Click += new System.EventHandler(this.startGame_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1010, 621);
+            this.Controls.Add(this.startGame);
             this.Controls.Add(this.start);
             this.Controls.Add(this.messageServer);
             this.Controls.Add(this.label2);
@@ -112,5 +125,6 @@
         private Label label2;
         private RichTextBox messageServer;
         private Button start;
+        private Button startGame;
     }
 }

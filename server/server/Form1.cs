@@ -27,6 +27,8 @@ namespace server
         bool terminating = false;
         bool listening = false;
 
+        bool isGameStarted = false;
+
         //Flag that checks eligibility for question asking
         bool eligiblityForQuestions = false;
 
@@ -369,6 +371,11 @@ namespace server
             terminating = true;
             broadCast("disconnect");
             Environment.Exit(0);
+        }
+
+        private void startGame_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

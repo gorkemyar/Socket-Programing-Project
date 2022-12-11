@@ -1060,7 +1060,8 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\gorke\\.nuget\\packages\\": {}
+    "C:\\Users\\gorke\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
@@ -1071,8 +1072,12 @@
       "packagesPath": "C:\\Users\\gorke\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\gorke\\Documents\\GitHub\\Computer-Networks-Project\\server\\server\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
         "C:\\Users\\gorke\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
