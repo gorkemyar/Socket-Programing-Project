@@ -21,6 +21,7 @@ namespace server
     {
         Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         List<Socket> clientSockets = new List<Socket>();
+        List<Socket> waitingList = new List<Socket>();
         Dictionary<string, double> map = new Dictionary<string, double>();
 
 
@@ -28,6 +29,8 @@ namespace server
         bool listening = false;
 
         bool isGameStarted = false;
+        int playerCount = 0;
+        int numberOfQuestions;
 
         //Flag that checks eligibility for question asking
         bool eligiblityForQuestions = false;
@@ -54,7 +57,7 @@ namespace server
         private void start_Click(object sender, EventArgs e)
         {
             int serverPort;
-            int numberOfQuestions;
+            
 
             messageServer.Clear();
             
@@ -74,7 +77,7 @@ namespace server
 
                 messageServer.AppendText("Started listening on port: " + serverPort + "\n");
 
-                Thread acceptThread = new Thread(()=> { Accept(numberOfQuestions);});
+                Thread acceptThread = new Thread(Accept);
                 acceptThread.Start();
                 
             }
@@ -85,12 +88,12 @@ namespace server
         }
 
         // Ask Questions and Validate the answers.
-        private void QuestionAndCheck(int numberOfQuestions)
+        private void QuestionAndCheck()
         {
             bool questionAsked = false; // currently there is not any question asked.
             while (listening && currentQuestion < numberOfQuestions && eligiblityForQuestions)
             {
-                if (answerCount == 2)
+                if (answerCount == playerCount)
                 {    
                     // Ask a question 
                     if (!questionAsked)
@@ -109,7 +112,7 @@ namespace server
                         checkAnswers();
 
                         //Send and Show Scores
-                        sendScores(numberOfQuestions);
+                        sendScores();
 
                         //ask a new question
                         questionAsked = false;
@@ -123,10 +126,10 @@ namespace server
             // Game is either finished or Interrupted
             if(!eligiblityForQuestions)
             {
-                messageServer.AppendText("At least one of the clients has disconnected!\nGame Ends!\n");
+                messageServer.AppendText("One of the clients has disconnected. There are less players than two!\nGame Ends!\n");
                 foreach(var user in map)
                 {
-                    messageServer.AppendText("Winner is: " + user.Key + "\n");
+                    messageServer.AppendText("Winner is: " + user.Key + " " + user.Value + "\n");
 
                 }
                 broadCast("winner winner chicken dinner");
@@ -134,7 +137,6 @@ namespace server
             }
             foreach(var client in clientSockets)
             {
-                
                 client.Close();
             }
             
@@ -145,6 +147,7 @@ namespace server
             answerCount = 0;
             
             start.Enabled = true;
+            startGame.Enabled = false;
             listening = false;
             serverSocket.Close();
             serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -152,19 +155,26 @@ namespace server
         }
 
         //Accept clients to the server
-        private void Accept(int questionNumber)
+        private void Accept()
         {
             while (listening)
             {
                 try
                 {
                     Socket newClient = serverSocket.Accept();
-                    
-                    clientSockets.Add(newClient);
-                    //messageServer.AppendText("A client is trying to connected.\n");
-                   
-                    Thread receiveThread = new Thread(() => Receive(newClient, questionNumber)); // updated
-                    receiveThread.Start();
+                    if (isGameStarted)
+                    {
+                        waitingList.Add(newClient);
+
+                    }
+                    else
+                    {
+                        clientSockets.Add(newClient);
+                        //messageServer.AppendText("A client is trying to connected.\n");
+
+                        Thread receiveThread = new Thread(() => Receive(newClient)); // updated
+                        receiveThread.Start();
+                    }
                 }
                 catch
                 {
@@ -184,7 +194,7 @@ namespace server
         // Check whether user is valid or not
         private bool ValidUser(string name)
         {
-            if (map.Count >= 2 || map.ContainsKey(name))
+            if (map.ContainsKey(name))
             {
                 return false;
             }
@@ -192,7 +202,7 @@ namespace server
         }
 
         //Receive messages from client
-        private void Receive(Socket thisClient, int questionNumber) // updated
+        private void Receive(Socket thisClient) // updated
         {
             bool connected = true;
             bool isPending = true;
@@ -201,6 +211,7 @@ namespace server
             {
                 try
                 {
+                    
                     // incoming message is username check its validty
                     Byte[] buffer = new Byte[64];
                     thisClient.Receive(buffer);
@@ -218,29 +229,21 @@ namespace server
                         sendMessage(thisClient, "connected to the server");
                         messageServer.AppendText("Client " + incomingMessage + " is connected!\n");
                         
-                        if (map.Count == 2)
+                        if (map.Count >= 2)
                         {
                             // there are 2 users start the game
-                            answerCount = 2;
-                            
-                            messageServer.AppendText("New game has started!\n");
-                            Thread questionThread = new Thread(() => { QuestionAndCheck(questionNumber); });
-                            questionThread.Start();
-                            eligiblityForQuestions = true;
+                            answerCount = map.Count();
+                            startGame.Enabled = true; 
                         }
 
                     }
                     else if (isPending)
                     {
                         // username is not valid or already enough users in the game. Send corresponding message
-                        if (map.Count >= 2)
-                        {
-                            sendMessage(thisClient, "the server is already full\n");
-                        }
-                        else
-                        {
-                            sendMessage(thisClient, "not valid username\n");
-                        }
+                       
+                       
+                        sendMessage(thisClient, "not valid username\n");
+                        
                         
                         // close the connection!
                         thisClient.Close();
@@ -278,9 +281,15 @@ namespace server
                     clientSockets.Remove(thisClient);
                     map.Remove(username);
                     answers.Remove(username);
-
+                    
+                    if (map.Count() < 2)
+                    {
+                        startGame.Enabled = false;
+                        eligiblityForQuestions = false;
+                    }
+                    playerCount--;
                     connected = false;
-                    eligiblityForQuestions = false;
+                    
                 }
             }
         }
@@ -344,7 +353,7 @@ namespace server
         }
 
         // Send & Show Scores
-        private void sendScores(int numberOfQuestions)
+        private void sendScores()
         {
             
             string scores = numberOfQuestions - 1 != currentQuestion ? "Scores: \n" : "Final Scores: ";
@@ -375,8 +384,14 @@ namespace server
 
         private void startGame_Click(object sender, EventArgs e)
         {
-
+            isGameStarted = true;
+            playerCount = map.Count;
+            messageServer.AppendText("New game has started!\n");
+            Thread questionThread = new Thread(QuestionAndCheck);
+            questionThread.Start();
+            eligiblityForQuestions = true;
         }
+
     }
 }
 
