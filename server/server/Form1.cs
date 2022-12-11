@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection.PortableExecutable;
+using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,15 +22,17 @@ namespace server
     {
         Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         List<Socket> clientSockets = new List<Socket>();
-        List<Socket> waitingList = new List<Socket>();
+ 
         Dictionary<string, double> map = new Dictionary<string, double>();
-
+        Dictionary<string, Socket> waitingMap = new Dictionary<string, Socket>();
 
         bool terminating = false;
         bool listening = false;
 
         bool isGameStarted = false;
+        int startGameButtonClicked = 0;
         int playerCount = 0;
+
         int numberOfQuestions;
 
         //Flag that checks eligibility for question asking
@@ -162,19 +165,13 @@ namespace server
                 try
                 {
                     Socket newClient = serverSocket.Accept();
-                    if (isGameStarted)
-                    {
-                        waitingList.Add(newClient);
-
-                    }
-                    else
-                    {
-                        clientSockets.Add(newClient);
+                    
+                        
                         //messageServer.AppendText("A client is trying to connected.\n");
-
-                        Thread receiveThread = new Thread(() => Receive(newClient)); // updated
-                        receiveThread.Start();
-                    }
+                    Thread receiveThread = new Thread(() => ReceiveWaiting(newClient)); // updated
+                    receiveThread.Start();
+                   
+                    
                 }
                 catch
                 {
@@ -194,24 +191,26 @@ namespace server
         // Check whether user is valid or not
         private bool ValidUser(string name)
         {
-            if (map.ContainsKey(name))
+            if (waitingMap.ContainsKey(name) ||map.ContainsKey(name))
             {
                 return false;
             }
             return true;
         }
 
-        //Receive messages from client
-        private void Receive(Socket thisClient) // updated
+
+
+        private void ReceiveWaiting(Socket thisClient) // updated
         {
             bool connected = true;
-            bool isPending = true;
             string username = "";
-            while (connected && !terminating)
+            int gameCount = startGameButtonClicked;
+
+            while (connected && !terminating && gameCount == startGameButtonClicked)
             {
                 try
                 {
-                    
+
                     // incoming message is username check its validty
                     Byte[] buffer = new Byte[64];
                     thisClient.Receive(buffer);
@@ -220,76 +219,99 @@ namespace server
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf('\0'));
 
                     //isPending will true until there is exactly 2 users;
-                    if (isPending && ValidUser(incomingMessage))
+                    if (ValidUser(incomingMessage))
                     {
-                        // username is valid, connect user to the server
-                        isPending = false;
+                       
                         username = incomingMessage;
-                        map[incomingMessage] = 0;
+                        waitingMap[incomingMessage] = thisClient;
                         sendMessage(thisClient, "connected to the server");
                         messageServer.AppendText("Client " + incomingMessage + " is connected!\n");
-                        
-                        if (map.Count >= 2)
+
+                        if (waitingMap.Count >= 2 && !isGameStarted)
                         {
                             // there are 2 users start the game
-                            answerCount = map.Count();
-                            startGame.Enabled = true; 
+                            //answerCount = map.Count();
+                            startGame.Enabled = true;
                         }
 
                     }
-                    else if (isPending)
+                    else 
                     {
                         // username is not valid or already enough users in the game. Send corresponding message
-                       
-                       
                         sendMessage(thisClient, "not valid username\n");
-                        
-                        
-                        // close the connection!
                         thisClient.Close();
-                        clientSockets.Remove(thisClient);
                         connected = false;
-                        isPending = false;
                     }
-                    else
-                    {
-                        // User is valid and game is started. Get answers from the clients.
-                        int answerNum;
-                        if (Int32.TryParse(incomingMessage, out answerNum)){
-                            answers[username] = answerNum;
-                            messageServer.AppendText(username+": "+ answerNum +"\n");
-                            // lock for answer count, basically it is a mutex
-                            Interlocked.Add(ref answerCount, 1);
-                        }
-                        else
-                        {
-                            Byte[] errorBuffer = Encoding.Default.GetBytes("Could not parse the answer!\n");
-                            thisClient.Send(errorBuffer);
-                        }
-                        
-                    }
-                    
                 }
                 catch
                 {
                     // if something goes wrong.
                     if (!terminating)
                     {
-                        messageServer.AppendText("A client has disconnected\n");
+                        messageServer.AppendText("A waiting client has disconnected\n");
+                    }
+                    thisClient.Close();
+                    waitingMap.Remove(username);
+
+                    if (waitingMap.Count() < 2 && !isGameStarted)
+                    {
+                        startGame.Enabled = false;
+                    }
+                    playerCount--;
+                    connected = false;
+
+                }
+            }
+        }
+
+
+
+        //Receive messages from client
+        private void Receive(Socket thisClient, string username) // updated
+        {
+            bool connected = true;
+            while (connected && !terminating)
+            {
+                try
+                {
+                    // incoming message is username check its validty
+                    Byte[] buffer = new Byte[64];
+                    thisClient.Receive(buffer);
+
+                    string incomingMessage = Encoding.Default.GetString(buffer);
+                    incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf('\0'));
+
+                    int answerNum;
+                    if (Int32.TryParse(incomingMessage, out answerNum)){
+                        answers[username] = answerNum;
+                        messageServer.AppendText(username+": "+ answerNum +"\n");
+                        // lock for answer count, basically it is a mutex
+                        Interlocked.Add(ref answerCount, 1);
+                    }
+                    else
+                    {
+                        Byte[] errorBuffer = Encoding.Default.GetBytes("Could not parse the answer!\n");
+                        thisClient.Send(errorBuffer);
+                    }    
+                }
+                catch
+                {
+                    // if something goes wrong.
+                    if (!terminating)
+                    {
+                        messageServer.AppendText("A playing client has disconnected\n");
                     }
                     thisClient.Close();
                     clientSockets.Remove(thisClient);
                     map.Remove(username);
                     answers.Remove(username);
-                    
-                    if (map.Count() < 2)
-                    {
-                        startGame.Enabled = false;
-                        eligiblityForQuestions = false;
-                    }
                     playerCount--;
                     connected = false;
-                    
+                    if (map.Count() < 2)
+                    {
+                        eligiblityForQuestions = false;
+                    }
+ 
                 }
             }
         }
@@ -384,12 +406,25 @@ namespace server
 
         private void startGame_Click(object sender, EventArgs e)
         {
+            startGameButtonClicked++;
             isGameStarted = true;
             playerCount = map.Count;
             messageServer.AppendText("New game has started!\n");
+            eligiblityForQuestions = true;
+
+            answerCount = waitingMap.Count;
+            playerCount = waitingMap.Count;
+            foreach (var item in waitingMap)
+            {
+                Thread clientThread = new Thread(() => { Receive(item.Value, item.Key); });
+                clientThread.Start();
+                map[item.Key] = 0;
+                clientSockets.Add(item.Value);
+            }
+            waitingMap.Clear();
+
             Thread questionThread = new Thread(QuestionAndCheck);
             questionThread.Start();
-            eligiblityForQuestions = true;
         }
 
     }
