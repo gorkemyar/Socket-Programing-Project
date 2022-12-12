@@ -21,9 +21,10 @@ namespace server
     {
         Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         List<Socket> clientSockets = new List<Socket>();
-        List<Socket> waitingList = new List<Socket>();
+        Dictionary<Socket, string > waitingDict = new Dictionary<Socket, string>();
+        
         Dictionary<string, double> map = new Dictionary<string, double>();
-
+        
 
         bool terminating = false;
         bool listening = false;
@@ -133,24 +134,35 @@ namespace server
 
                 }
                 broadCast("winner winner chicken dinner");
-
+                
             }
-            foreach(var client in clientSockets)
-            {
-                client.Close();
-            }
+            //foreach(var client in clientSockets)
+            //{
+            //    client.Close();
+            //}
             
-            clientSockets.Clear();
-            map.Clear();
-            answers.Clear();
+            //clientSockets.Clear();
+            //map.Clear();
+            
+            //answers.Clear();
+            foreach(var user in map)
+            {
+                map[user.Key] = 0;
+            }
+
+            foreach(var user in answers)
+            {
+                answers[user.Key] = 0;
+            }
             currentQuestion = 0;
             answerCount = 0;
-            
-            start.Enabled = true;
-            startGame.Enabled = false;
-            listening = false;
-            serverSocket.Close();
-            serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            isGameStarted = false;
+
+            //start.Enabled = true;
+            startGame.Enabled = true;
+            //listening = false;
+            //serverSocket.Close();
+            //serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
         }
 
@@ -164,7 +176,9 @@ namespace server
                     Socket newClient = serverSocket.Accept();
                     if (isGameStarted)
                     {
-                        waitingList.Add(newClient);
+                        waitingDict[newClient] = "";
+                        Thread receiveThread = new Thread(() => Receive(newClient)); // updated
+                        receiveThread.Start();
 
                     }
                     else
@@ -194,7 +208,7 @@ namespace server
         // Check whether user is valid or not
         private bool ValidUser(string name)
         {
-            if (map.ContainsKey(name))
+            if (map.ContainsKey(name) || waitingDict.ContainsValue(name))
             {
                 return false;
             }
@@ -219,8 +233,27 @@ namespace server
                     string incomingMessage = Encoding.Default.GetString(buffer);
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf('\0'));
 
+                    if (isGameStarted && waitingDict.ContainsKey(thisClient))
+                    {
+                        if (ValidUser(incomingMessage))
+                        {
+                            sendMessage(thisClient, "Game has already started. Wait until the new game starts.\n");
+                            username = incomingMessage;
+                            waitingDict[thisClient] = username;
+                        }
+                        else
+                        {
+                            sendMessage(thisClient, "not valid username\n");
+
+
+                            // close the connection!
+                            thisClient.Close();
+                            waitingDict.Remove(thisClient);
+                            connected = false;
+                        }
+                    }
                     //isPending will true until there is exactly 2 users;
-                    if (isPending && ValidUser(incomingMessage))
+                    else if (isPending && ValidUser(incomingMessage))
                     {
                         // username is valid, connect user to the server
                         isPending = false;
@@ -229,10 +262,10 @@ namespace server
                         sendMessage(thisClient, "connected to the server");
                         messageServer.AppendText("Client " + incomingMessage + " is connected!\n");
                         
-                        if (map.Count >= 2)
+                        if (map.Count + waitingDict.Count >= 2)
                         {
                             // there are 2 users start the game
-                            answerCount = map.Count();
+                            answerCount = map.Count() + waitingDict.Count;
                             startGame.Enabled = true; 
                         }
 
@@ -385,11 +418,24 @@ namespace server
         private void startGame_Click(object sender, EventArgs e)
         {
             isGameStarted = true;
+            startGame.Enabled = false;
+            foreach (var item in waitingDict) 
+            {
+                clientSockets.Add(item.Key);
+                map[item.Value] = 0; 
+            }
+
+            waitingDict.Clear();
+            
             playerCount = map.Count;
+
             messageServer.AppendText("New game has started!\n");
             Thread questionThread = new Thread(QuestionAndCheck);
             questionThread.Start();
             eligiblityForQuestions = true;
+
+            
+
         }
 
     }
