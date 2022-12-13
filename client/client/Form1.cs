@@ -92,7 +92,7 @@ namespace client
 
                         messageBox.Clear();
                         messageBox.AppendText("Connected to the Server!\n");
-                        send.Enabled = true;
+                        //send.Enabled = true;
 
                     } else if (incomingMessage.Contains("not valid username")) { // not a valid user
 
@@ -117,11 +117,11 @@ namespace client
                     else if (incomingMessage.Contains("Final")) // if the game succesfully completed
                     {
                         messageBox.AppendText("The game is finished. " + incomingMessage + "\n");
-                        clientSocket.Close();
-                        connected = false;
-                        terminating = true;
-                        connect.Enabled = true;
-                        disconnect.Enabled = false;
+                        //clientSocket.Close();
+                        //connected = false;
+                        //terminating = true;
+                        //connect.Enabled = true;
+                        //disconnect.Enabled = false;
                         send.Enabled = false;
                     }
                     else if (incomingMessage.Contains("disconnect")) // if game interrupted
