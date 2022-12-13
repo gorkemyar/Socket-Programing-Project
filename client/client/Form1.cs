@@ -81,11 +81,6 @@ namespace client
                     if (incomingMessage.Contains("winner winner chicken dinner")) // get question numbers
                     {
                         messageBox.AppendText("Other user is disconnected, You are the winner!");
-                        clientSocket.Close();
-                        connected = false;
-                        terminating = true;
-                        connect.Enabled = true;
-                        disconnect.Enabled = false;
                         send.Enabled = false;
 
                     } else if (incomingMessage.Contains("connected to the server")){ // connection is established
@@ -133,6 +128,7 @@ namespace client
                         connect.Enabled = true;
                         disconnect.Enabled = false;
                         send.Enabled = false;
+                        disconnect.Enabled = false;
                     }
                     else if (incomingMessage.Length > 1) // any other messages
                     {
@@ -185,7 +181,6 @@ namespace client
             connected = false;
             terminating = true;
             send.Enabled=false;
-
         }
     }
 }
