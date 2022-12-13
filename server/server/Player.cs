@@ -13,6 +13,7 @@ namespace server
         public string name;
         public bool playing;
         public int score;
+        public bool didAnswer = false;
 
         Player(Socket s, string n, bool p, int sc)
         {
@@ -21,6 +22,7 @@ namespace server
             score = sc;
             playing = p;
         }
+
         
     }
 }

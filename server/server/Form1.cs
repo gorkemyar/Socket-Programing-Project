@@ -23,7 +23,6 @@ namespace server
         Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         List<Socket> inGameSockets = new List<Socket>();
         Dictionary<Socket, string > allSockets = new Dictionary<Socket, string>();
-        
         Dictionary<string, double> inGameMap = new Dictionary<string, double>();
 
 
@@ -42,7 +41,7 @@ namespace server
         int currentQuestion = 0;
 
         //Dictionary to store the answers of the clients.
-        Dictionary<string, int> answers = new Dictionary<string, int>(); 
+        Dictionary<string, int?> answers = new Dictionary<string, int?>(); 
 
         //Question class that reads questions from a txt file and ask question.
         Questions questions = new Questions("questions.txt");
@@ -131,27 +130,9 @@ namespace server
                 messageServer.AppendText("Winner is: " + user.Key + " " + user.Value + "\n");
 
             }
-                
-            
-            //foreach(var client in clientSockets)
-            //{
-            //    client.Close();
-            //}
-            
-            //clientSockets.Clear();
-            //map.Clear();
-            
-            //answers.Clear();
-            
             currentQuestion = 0;
             answerCount = 0;
             inGame= false;
-            //start.Enabled = true;
-            //startGame.Enabled = true;
-            //listening = false;
-            //serverSocket.Close();
-            //serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
         }
 
         //Accept clients to the server
@@ -307,6 +288,10 @@ namespace server
                     }
                     if (answers.ContainsKey(username))
                     {
+                        if (answers[username] != null)
+                        {
+                            answerCount--;
+                        }
                         answers.Remove(username);
                     }
                     allSockets.Remove(thisClient);
@@ -323,7 +308,11 @@ namespace server
             List<string> winnerList = new List<string>();
             foreach (var item in answers)
             {
-                int curr = questions.checkAnswer(currentQuestion, item.Value);
+
+                int tempAnswer = (int)(item.Value != null ? item.Value! : 0);
+                int curr = questions.checkAnswer(currentQuestion, tempAnswer);
+
+                
                 if (curr < closestAnswer)
                 {
                     winnerList = new List<string> { item.Key };
