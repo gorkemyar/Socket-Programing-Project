@@ -87,11 +87,21 @@ namespace client
                         connect.Enabled = true;
                         disconnect.Enabled = false;
                         send.Enabled = false;
+                    } else if (incomingMessage.Contains("connected and wait"))
+                    {
+                        messageBox.Clear();
+                        messageBox.AppendText("Connected to the Server! But wait until next game!\n");
+                        send.Enabled = false;
 
-                    } else if (incomingMessage.Contains("connected to the server")){ // connection is established
+                    } else if (incomingMessage.Contains("connected to the server")) { // connection is established
 
                         messageBox.Clear();
                         messageBox.AppendText("Connected to the Server!\n");
+                        send.Enabled = false;
+                    }else if(incomingMessage.Contains("game started"))
+                    {
+                        messageBox.Clear();
+                        messageBox.AppendText("Game is started!\n");
                         send.Enabled = true;
 
                     } else if (incomingMessage.Contains("not valid username")) { // not a valid user
@@ -117,11 +127,7 @@ namespace client
                     else if (incomingMessage.Contains("Final")) // if the game succesfully completed
                     {
                         messageBox.AppendText("The game is finished. " + incomingMessage + "\n");
-                        clientSocket.Close();
-                        connected = false;
-                        terminating = true;
-                        connect.Enabled = true;
-                        disconnect.Enabled = false;
+                        disconnect.Enabled = true;
                         send.Enabled = false;
                     }
                     else if (incomingMessage.Contains("disconnect")) // if game interrupted
