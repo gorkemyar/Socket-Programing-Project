@@ -23,13 +23,15 @@ struct Client
     public string name;
     public bool playing;
     public double score;
+    public int answer;
 
-    public Client(Socket s, string n, bool p, double sc)
+    public Client(Socket s, string n, bool p, double sc, int ans = 0)
     {
         socket = s;
         name = n;
         score = sc;
         playing = p;
+        answer = ans;
     }
 };
 
@@ -41,7 +43,6 @@ namespace server
 
         //Dictionary to store the answers of the clients.
         Dictionary<string, Client> clients = new Dictionary<string, Client>();
-        Dictionary<string, int> answers = new Dictionary<string, int>();
 
         bool terminating = false;
         bool listening = false;
@@ -57,7 +58,6 @@ namespace server
 
         int activeUser = 0;
         int allUsers = 0;
-        bool isGamePlaying = false;
 
         //Question class that reads questions from a txt file and ask question.
         Questions questions = new Questions("questions.txt");
@@ -109,9 +109,10 @@ namespace server
                 Client tmp = clients[client.Key];
                 tmp.playing = true;
                 tmp.score = 0;
+                tmp.answer = 0;
                 clients[client.Key] = tmp;
                 Interlocked.Add(ref activeUser, 1);
-                answers[client.Key] = 0;
+   
             }
             
             Thread questionThread = new Thread(QuestionAndCheck);
@@ -169,12 +170,12 @@ namespace server
                             messageServer.AppendText("Client " + incomingMessage + " is connected!\n");
 
                             clients[username] = new Client(thisClient, username, false, 0);
-                
+                            Interlocked.Add(ref allUsers, 1);
                             if ((allUsers-activeUser) >= 2 && activeUser == 0)
                             {
                                 startGame.Enabled = true;
                             }
-                            Interlocked.Add(ref allUsers, 1);
+                            
 
                         }
                         else
@@ -194,7 +195,9 @@ namespace server
                             int answerNum;
 
                             if (Int32.TryParse(incomingMessage, out answerNum)){
-                                answers[username] = answerNum;
+                                Client tmp = clients[username];
+                                tmp.answer = answerNum;
+                                clients[username] = tmp;
                                 messageServer.AppendText(username + ": " + answerNum + "\n");
                                 
                             }
@@ -218,7 +221,6 @@ namespace server
                         Interlocked.Add(ref activeUser,-1);
                     }
                     clients.Remove(username);
-                    answers.Remove(username);
                     Interlocked.Add(ref allUsers, -1);
                     thisClient.Close();
                     connected = false;
@@ -233,7 +235,7 @@ namespace server
             bool questionAsked = false; // currently there is not any question asked.
             while (listening && currentQuestion < numberOfQuestions && activeUser >= 2)
             {
-                if (answers.Count() == activeUser)
+                if (IsAllClientsAnswered())
                 {
                     // Ask a question 
                     if (!questionAsked)
@@ -241,10 +243,12 @@ namespace server
                         string newQuestion = questions.askQuestion(currentQuestion) + "\n";
                         messageServer.AppendText(newQuestion + "\n");
                         broadCast(newQuestion);
+                        resetField();
+
                         questionAsked = true;
 
                         // no body answered questions yet.
-                        answers.Clear();
+                   
                     } // all clients answered questions.
                     else
                     {
@@ -277,6 +281,7 @@ namespace server
                 Client tmp = clients[client.Key];
                 tmp.playing = false;
                 tmp.score = 0;
+                tmp.answer = Int32.MinValue;
                 clients[client.Key] = tmp;
             }
             activeUser = 0;
@@ -290,25 +295,48 @@ namespace server
 
         }
 
-
-
+        private void resetField()
+        {
+            foreach (var client in clients)
+            {
+                if (client.Value.playing)
+                {
+                    Client tmp = clients[client.Key];
+                    tmp.answer = Int32.MinValue;
+                    clients[client.Key] = tmp;
+                }    
+            }
+        }
+        private bool IsAllClientsAnswered()
+        {
+            bool flag = true;
+            foreach (Client client in clients.Values)
+            {
+                if (client.answer == (double)Int32.MinValue)
+                {
+                    flag = false;
+                    break;
+                }
+            }
+            return flag;
+        }
         private void checkAnswers()
         {
             int closestAnswer = int.MaxValue;
             List<string> winnerList = new List<string>();
-            foreach (var item in answers)
+            foreach (var client in clients)
             {
-                int curr = questions.checkAnswer(currentQuestion, item.Value);
+                int curr = questions.checkAnswer(currentQuestion, client.Value.answer);
                 if (curr < closestAnswer)
                 {
-                    winnerList = new List<string> { item.Key };
+                    winnerList = new List<string> { client.Key };
                     closestAnswer = curr;
                 }
                 else
                 {
                     if (curr == closestAnswer)
                     {
-                        winnerList.Add(item.Key);
+                        winnerList.Add(client.Key);
                     }
                 }
 
@@ -352,7 +380,7 @@ namespace server
         private void sendScores()
         {       
             string scores = numberOfQuestions - 1 != currentQuestion ? "Scores: \n" : "Final Scores: ";
-            var ordered = clients.Where(x=> x.Value.playing == true).OrderBy(x => -1 * x.Value.score).ToDictionary(x => x.Key, x => x.Value.score);
+            var ordered = clients.Where(x=> x.Value.playing == true).OrderBy(x => -1 * x.Value.score).ToDictionary(x => x.Key, x => x.Value.score   );
             foreach (var item in ordered)
             {      
                scores += item.Key + ": " + item.Value + " ";      
