@@ -2,9 +2,11 @@ using Microsoft.VisualBasic.Logging;
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Policy;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using static System.Windows.Forms.AxHost;
 
 namespace client
 {
@@ -78,9 +80,9 @@ namespace client
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf('\0'));
 
 
-                    if (incomingMessage.Contains("winner winner chicken dinner")) // get question numbers
+                    if (incomingMessage.Contains("only one player")) // get question numbers
                     {
-                        messageBox.AppendText("Other user is disconnected, You are the winner!");
+                        messageBox.AppendText("Only you are left in the game, you are the winner! ");
                         send.Enabled = false;
 
                     } else if (incomingMessage.Contains("connected to the server")){ // connection is established
@@ -99,14 +101,9 @@ namespace client
                         disconnect.Enabled = false;
                         send.Enabled = false;
 
-                    } else if (incomingMessage.Contains("the server is already full")) // if server is full already
+                    } else if (incomingMessage.Contains("game started")) // if server is full already
                     {
-                        messageBox.AppendText("The game is already full!\n");
-                        clientSocket.Close();
-                        connected = false;
-                        terminating = true;
-                        connect.Enabled = true;
-                        disconnect.Enabled = false;
+                        messageBox.AppendText("The game has already started, wait for the next round \n");
                         send.Enabled = false;
                     }
                     else if (incomingMessage.Contains("Final")) // if the game succesfully completed

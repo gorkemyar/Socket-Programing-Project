@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualBasic.Logging;
 using System;
+using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -22,6 +23,7 @@ struct Client
     public Socket socket;
     public string name;
     public bool playing;
+   
     public double score;
     public int answer;
 
@@ -32,6 +34,7 @@ struct Client
         score = sc;
         playing = p;
         answer = ans;
+     
     }
 };
 
@@ -43,6 +46,8 @@ namespace server
 
         //Dictionary to store the answers of the clients.
         Dictionary<string, Client> clients = new Dictionary<string, Client>();
+        List<string> leftplayers = new List<string>();
+
 
         bool terminating = false;
         bool listening = false;
@@ -59,6 +64,7 @@ namespace server
         int activeUser = 0;
         int allUsers = 0;
 
+        bool isgameon = false;
         //Question class that reads questions from a txt file and ask question.
         Questions questions = new Questions("questions.txt");
 
@@ -104,6 +110,8 @@ namespace server
         {
 
             startGame.Enabled = false;
+            isgameon = true;
+            leftplayers = new List<string>(); 
             foreach (var client in clients)
             {
                 Client tmp = clients[client.Key];
@@ -126,7 +134,8 @@ namespace server
             {
                 try
                 {
-                    Socket newClient = serverSocket.Accept();    
+                    Socket newClient = serverSocket.Accept();
+           
                     Thread receiveThread = new Thread(() => Receive(newClient)); // updated
                     receiveThread.Start();
   
@@ -175,9 +184,15 @@ namespace server
                             {
                                 startGame.Enabled = true;
                             }
+
+                            if (isgameon)
+                            {
+                                sendMessage(thisClient, "game started");
+                            }
                             
 
                         }
+                        
                         else
                         {
                             // username is not valid or already enough users in the game. Send corresponding message
@@ -212,7 +227,7 @@ namespace server
                 catch
                 {
                     // if something goes wrong.
-                    if (!terminating)
+                    /*if (!terminating)
                     {
                         messageServer.AppendText("A playing client has disconnected\n");
                     }
@@ -224,7 +239,38 @@ namespace server
                     Interlocked.Add(ref allUsers, -1);
                     thisClient.Close();
                     connected = false;
- 
+                    */
+
+                    if (!terminating)
+                    {
+                        if (clients[username].playing)
+                        {
+                            Interlocked.Add(ref activeUser, -1);     
+                            messageServer.AppendText( username + " has disconnected from game \n");
+                            
+                          
+
+                        }
+                        else
+                        {
+                            messageServer.AppendText("A client has disconnected\n");
+                        }
+                        
+                    }
+
+                    leftplayers.Add(username);
+                    clients.Remove(username);
+                    if (!terminating)
+                    {
+                        broadCast("Player " + username + " has left the game.");
+                    }
+                    Interlocked.Add(ref allUsers, -1);
+                    thisClient.Close();
+                    connected = false;
+                    
+
+
+
                 }
             }
         }
@@ -269,13 +315,23 @@ namespace server
             if (activeUser < 2)
             {
                 messageServer.AppendText("One of the clients has disconnected. There are less players than two!\nGame Ends!\n");
+                
                 foreach (Client client in clients.Values)
                 {
-                    messageServer.AppendText("Winner is: " + client.name + " " + client.score + "\n");
+                    if(client.playing) {
+                        messageServer.AppendText("Winner is: " + client.name + " " + client.score + "\n");
+                        sendMessage(client.socket , "only one player");
+                        sendScores();
+                    }
+                    
+                    
+                    
+                    
 
                 }
             }
 
+            
             foreach (var client in clients)
             {
                 Client tmp = clients[client.Key];
@@ -286,6 +342,7 @@ namespace server
             }
             activeUser = 0;
             currentQuestion = 0;
+            isgameon = false;
 
             start.Enabled = false;
             startGame.Enabled = (allUsers-activeUser) >= 2 ? true : false;
@@ -379,14 +436,19 @@ namespace server
         }
         private void sendScores()
         {       
-            string scores = numberOfQuestions - 1 != currentQuestion ? "Scores: \n" : "Final Scores: ";
+            string scores = (numberOfQuestions - 1 != currentQuestion) || (activeUser >= 2)  ? "Scores: \n" : "Final Scores: ";
             var ordered = clients.Where(x=> x.Value.playing == true).OrderBy(x => -1 * x.Value.score).ToDictionary(x => x.Key, x => x.Value.score   );
+            foreach (string player in leftplayers)
+            {
+                 ordered.Add(player, 0);
+               
+            }
             foreach (var item in ordered)
             {      
                scores += item.Key + ": " + item.Value + " ";      
             }
             scores += "\n";
-            if (numberOfQuestions - 1 == currentQuestion) // if game is ended send the winner
+            if ((numberOfQuestions - 1 == currentQuestion)) // if game is ended send the winner
             {
                 var maxValuePair = clients.Aggregate((x, y) => x.Value.score > y.Value.score ? x : y);
                 bool isDraw = clients.Count(kv => kv.Value.score == maxValuePair.Value.score) > 1;

@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\gorke\\Documents\\GitHub\\Computer-Networks-Project\\client\\client\\client.csproj": {}
+    "C:\\Users\\basak\\OneDrive\\Belgeler\\GitHub\\Computer-Networks-Project\\client\\client\\client.csproj": {}
   },
   "projects": {
-    "C:\\Users\\gorke\\Documents\\GitHub\\Computer-Networks-Project\\client\\client\\client.csproj": {
+    "C:\\Users\\basak\\OneDrive\\Belgeler\\GitHub\\Computer-Networks-Project\\client\\client\\client.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\gorke\\Documents\\GitHub\\Computer-Networks-Project\\client\\client\\client.csproj",
+        "projectUniqueName": "C:\\Users\\basak\\OneDrive\\Belgeler\\GitHub\\Computer-Networks-Project\\client\\client\\client.csproj",
         "projectName": "client",
-        "projectPath": "C:\\Users\\gorke\\Documents\\GitHub\\Computer-Networks-Project\\client\\client\\client.csproj",
-        "packagesPath": "C:\\Users\\gorke\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\gorke\\Documents\\GitHub\\Computer-Networks-Project\\client\\client\\obj\\",
+        "projectPath": "C:\\Users\\basak\\OneDrive\\Belgeler\\GitHub\\Computer-Networks-Project\\client\\client\\client.csproj",
+        "packagesPath": "C:\\Users\\basak\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\basak\\OneDrive\\Belgeler\\GitHub\\Computer-Networks-Project\\client\\client\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\gorke\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\basak\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -62,7 +58,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.402\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }

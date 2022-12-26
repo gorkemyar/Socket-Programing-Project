@@ -1060,24 +1060,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\gorke\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\basak\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\gorke\\Documents\\GitHub\\Computer-Networks-Project\\server\\server\\server.csproj",
+      "projectUniqueName": "C:\\Users\\basak\\OneDrive\\Belgeler\\GitHub\\Computer-Networks-Project\\server\\server\\server.csproj",
       "projectName": "server",
-      "projectPath": "C:\\Users\\gorke\\Documents\\GitHub\\Computer-Networks-Project\\server\\server\\server.csproj",
-      "packagesPath": "C:\\Users\\gorke\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\gorke\\Documents\\GitHub\\Computer-Networks-Project\\server\\server\\obj\\",
+      "projectPath": "C:\\Users\\basak\\OneDrive\\Belgeler\\GitHub\\Computer-Networks-Project\\server\\server\\server.csproj",
+      "packagesPath": "C:\\Users\\basak\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\basak\\OneDrive\\Belgeler\\GitHub\\Computer-Networks-Project\\server\\server\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\gorke\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\basak\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -1127,7 +1122,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.402\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
       }
     }
   }
