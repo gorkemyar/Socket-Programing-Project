@@ -84,7 +84,7 @@ namespace client
                     {
                         messageBox.AppendText("Only you are left in the game, you are the winner! ");
                         send.Enabled = false;
-
+                          
                     } else if (incomingMessage.Contains("connected to the server")){ // connection is established
 
                         messageBox.Clear();
@@ -127,11 +127,15 @@ namespace client
                         send.Enabled = false;
                         disconnect.Enabled = false;
                     }
-                    else if (incomingMessage.Length > 1) // any other messages
+                    else if (incomingMessage.Contains("Question")) // any other messages
                     {
                         messageBox.AppendText(incomingMessage + "\n");
                         answerBox.Enabled = true;
                         send.Enabled = true;
+                    }
+                    else
+                    {
+                        messageBox.AppendText(incomingMessage + "\n");
                     }
                 }
                 catch // if something goes wrong
@@ -141,7 +145,7 @@ namespace client
                         messageBox.AppendText("The server has disconnected\n");
                         connect.Enabled = true;
                     }
-
+                    disconnect.Enabled = false;
                     clientSocket.Close();
                     connected = false;
                 }

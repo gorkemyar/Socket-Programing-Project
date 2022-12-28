@@ -106,24 +106,31 @@ namespace server
 
         private void startGame_Click(object sender, EventArgs e)
         {
-
-            startGame.Enabled = false;
-            isgameon = true;
-            leftplayers = new List<string>();
-            global_mutex.WaitOne();
-            foreach (var client in clients)
+            if (Int32.TryParse(questionNumber.Text, out numberOfQuestions))
             {
-                Client tmp = clients[client.Key];
-                tmp.playing = true;
-                tmp.score = 0;
-                tmp.answer = 0;
-                clients[client.Key] = tmp;
-                Interlocked.Add(ref activeUser, 1);
-            }
-            global_mutex.ReleaseMutex();
+                messageServer.Clear();
+                startGame.Enabled = false;
+                isgameon = true;
+                leftplayers = new List<string>();
+                global_mutex.WaitOne();
+                foreach (var client in clients)
+                {
+                    Client tmp = clients[client.Key];
+                    tmp.playing = true;
+                    tmp.score = 0;
+                    tmp.answer = 0;
+                    clients[client.Key] = tmp;
+                    Interlocked.Add(ref activeUser, 1);
+                }
+                global_mutex.ReleaseMutex();
 
-            Thread questionThread = new Thread(QuestionAndCheck);
-            questionThread.Start();
+                Thread questionThread = new Thread(QuestionAndCheck);
+                questionThread.Start();
+            }
+            else
+            {
+                messageServer.AppendText("Please  number of questions!! \n");
+            }
         }
 
         private void Accept()
@@ -133,7 +140,6 @@ namespace server
                 try
                 {
                     Socket newClient = serverSocket.Accept();
-           
                     Thread receiveThread = new Thread(() => Receive(newClient)); // updated
                     receiveThread.Start();
   
@@ -190,7 +196,7 @@ namespace server
                         }           
                         else
                         {
-                            // username is not valid or already enough users in the game. Send corresponding message
+                            // username is not valid 
                             sendMessage(thisClient, "not valid username\n");
                             thisClient.Close();
                             connected = false;
@@ -222,44 +228,31 @@ namespace server
                 }
                 catch
                 {
-                    // if something goes wrong.
-                    /*if (!terminating)
-                    {
-                        messageServer.AppendText("A playing client has disconnected\n");
-                    }
-                    if (clients[username].playing)
-                    {
-                        Interlocked.Add(ref activeUser,-1);
-                    }
-                    clients.Remove(username);
-                    Interlocked.Add(ref allUsers, -1);
-                    thisClient.Close();
-                    connected = false;
-                    */
 
+                    bool clientPlaying = clients[username].playing;
+                    leftplayers.Add(username);
+                    global_mutex.WaitOne();
+                    clients.Remove(username);
+                    global_mutex.ReleaseMutex();
+                    Interlocked.Add(ref allUsers, -1);
                     if (!terminating)
                     {
-                        if (clients[username].playing)
+                        broadCast("Player " + username + " has left the game.");
+                        if (clientPlaying)
                         {
-                            Interlocked.Add(ref activeUser, -1);     
-                            messageServer.AppendText( username + " has disconnected from game \n");
+                            Interlocked.Add(ref activeUser, -1);
+                            messageServer.AppendText(username + " has disconnected from game \n");
                         }
                         else
                         {
                             messageServer.AppendText("A client has disconnected\n");
                         }
-                        
                     }
-
-                    leftplayers.Add(username);
-                    global_mutex.WaitOne();
-                    clients.Remove(username);
-                    global_mutex.ReleaseMutex();
-                    if (!terminating)
+                    if (!isgameon && allUsers < 2)
                     {
-                        broadCast("Player " + username + " has left the game.");
+                        startGame.Enabled = false;
                     }
-                    Interlocked.Add(ref allUsers, -1);
+                    
                     thisClient.Close();
                     connected = false;
                 }
@@ -276,13 +269,13 @@ namespace server
                     if (!questionAsked)
                     {
                         string newQuestion = questions.askQuestion(currentQuestion) + "\n";
-                        messageServer.AppendText(newQuestion + "\n");
-                        broadCast(newQuestion);
+                        messageServer.AppendText("Question-"+ (currentQuestion+1) +": " + newQuestion + "\n");
+                        broadCast("Question-" + (currentQuestion+1) + ": " + newQuestion);
                         resetField();
 
                         questionAsked = true;
 
-                        // no body answered questions yet.
+                        
                    
                     } // all clients answered questions.
                     else
@@ -465,6 +458,7 @@ namespace server
                scores += item.Key + ": " + item.Value + " ";      
             }
             scores += "\n";
+            messageServer.AppendText(scores);
             if ((numberOfQuestions - 1 == currentQuestion)) // if game is ended send the winner
             {
                 global_mutex.WaitOne();
@@ -472,8 +466,9 @@ namespace server
                 bool isDraw = clients.Count(kv => kv.Value.score == maxValuePair.Value.score) > 1;
                 global_mutex.ReleaseMutex();
                 scores += !isDraw ? "Winner: " + maxValuePair.Key + " !!!\n" : "Draw!!\n";
+                messageServer.AppendText(!isDraw ? "Winner: " + maxValuePair.Key + " !!!\n" : "Draw!!\n");
             }
-            messageServer.AppendText(scores+ "\n");
+            
             broadCast(scores);
         }
         private bool ValidUser(string name)
