@@ -132,6 +132,11 @@ namespace client
                         messageBox.AppendText(incomingMessage + "\n");
                         answerBox.Enabled = true;
                         send.Enabled = true;
+                    }else if (incomingMessage.Contains("Could not parse the answer"))
+                    {   
+                        messageBox.AppendText(incomingMessage + "\n");
+                        send.Enabled = true;
+                        answerBox.Enabled= true;
                     }
                     else
                     {
