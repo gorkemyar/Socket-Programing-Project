@@ -2,9 +2,11 @@ using Microsoft.VisualBasic.Logging;
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Policy;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using static System.Windows.Forms.AxHost;
 
 namespace client
 {
@@ -78,21 +80,16 @@ namespace client
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf('\0'));
 
 
-                    if (incomingMessage.Contains("winner winner chicken dinner")) // get question numbers
+                    if (incomingMessage.Contains("only one player")) // get question numbers
                     {
-                        messageBox.AppendText("Other user is disconnected, You are the winner!");
-                        clientSocket.Close();
-                        connected = false;
-                        terminating = true;
-                        connect.Enabled = true;
-                        disconnect.Enabled = false;
+                        messageBox.AppendText("Only you are left in the game, you are the winner! ");
                         send.Enabled = false;
-
+                          
                     } else if (incomingMessage.Contains("connected to the server")){ // connection is established
 
                         messageBox.Clear();
                         messageBox.AppendText("Connected to the Server!\n");
-                        send.Enabled = true;
+                        //send.Enabled = true;
 
                     } else if (incomingMessage.Contains("not valid username")) { // not a valid user
 
@@ -104,24 +101,19 @@ namespace client
                         disconnect.Enabled = false;
                         send.Enabled = false;
 
-                    } else if (incomingMessage.Contains("the server is already full")) // if server is full already
+                    } else if (incomingMessage.Contains("game started")) // if server is full already
                     {
-                        messageBox.AppendText("The game is already full!\n");
-                        clientSocket.Close();
-                        connected = false;
-                        terminating = true;
-                        connect.Enabled = true;
-                        disconnect.Enabled = false;
+                        messageBox.AppendText("The game has already started, wait for the next round \n");
                         send.Enabled = false;
                     }
                     else if (incomingMessage.Contains("Final")) // if the game succesfully completed
                     {
                         messageBox.AppendText("The game is finished. " + incomingMessage + "\n");
-                        clientSocket.Close();
-                        connected = false;
-                        terminating = true;
-                        connect.Enabled = true;
-                        disconnect.Enabled = false;
+                        //clientSocket.Close();
+                        //connected = false;
+                        //terminating = true;
+                        //connect.Enabled = true;
+                        //disconnect.Enabled = false;
                         send.Enabled = false;
                     }
                     else if (incomingMessage.Contains("disconnect")) // if game interrupted
@@ -133,12 +125,22 @@ namespace client
                         connect.Enabled = true;
                         disconnect.Enabled = false;
                         send.Enabled = false;
+                        disconnect.Enabled = false;
                     }
-                    else if (incomingMessage.Length > 1) // any other messages
+                    else if (incomingMessage.Contains("Question")) // any other messages
                     {
                         messageBox.AppendText(incomingMessage + "\n");
                         answerBox.Enabled = true;
                         send.Enabled = true;
+                    }else if (incomingMessage.Contains("Could not parse the answer"))
+                    {   
+                        messageBox.AppendText(incomingMessage + "\n");
+                        send.Enabled = true;
+                        answerBox.Enabled= true;
+                    }
+                    else
+                    {
+                        messageBox.AppendText(incomingMessage + "\n");
                     }
                 }
                 catch // if something goes wrong
@@ -148,7 +150,7 @@ namespace client
                         messageBox.AppendText("The server has disconnected\n");
                         connect.Enabled = true;
                     }
-
+                    disconnect.Enabled = false;
                     clientSocket.Close();
                     connected = false;
                 }
@@ -185,7 +187,6 @@ namespace client
             connected = false;
             terminating = true;
             send.Enabled=false;
-
         }
     }
 }

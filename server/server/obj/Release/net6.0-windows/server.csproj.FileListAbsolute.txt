@@ -1,0 +1,17 @@
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\server\server\bin\Release\net6.0-windows\server.exe
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\server\server\bin\Release\net6.0-windows\server.deps.json
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\server\server\bin\Release\net6.0-windows\server.runtimeconfig.json
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\server\server\bin\Release\net6.0-windows\server.dll
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\server\server\bin\Release\net6.0-windows\server.pdb
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\server\server\obj\Release\net6.0-windows\server.csproj.AssemblyReference.cache
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\server\server\obj\Release\net6.0-windows\server.Form1.resources
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\server\server\obj\Release\net6.0-windows\server.csproj.GenerateResource.cache
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\server\server\obj\Release\net6.0-windows\server.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\server\server\obj\Release\net6.0-windows\server.AssemblyInfoInputs.cache
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\server\server\obj\Release\net6.0-windows\server.AssemblyInfo.cs
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\server\server\obj\Release\net6.0-windows\server.csproj.CoreCompileInputs.cache
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\server\server\obj\Release\net6.0-windows\server.dll
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\server\server\obj\Release\net6.0-windows\refint\server.dll
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\server\server\obj\Release\net6.0-windows\server.pdb
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\server\server\obj\Release\net6.0-windows\server.genruntimeconfig.cache
+C:\Users\gorke\Documents\GitHub\Computer-Networks-Project\server\server\obj\Release\net6.0-windows\ref\server.dll

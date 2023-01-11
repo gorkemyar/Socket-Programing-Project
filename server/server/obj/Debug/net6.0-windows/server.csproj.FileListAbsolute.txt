@@ -32,3 +32,20 @@ C:\Users\rebah\Desktop\CS_S03E02\CS 408\CS 408-term project-Fall22\Computer-Netw
 C:\Users\rebah\Desktop\CS_S03E02\CS 408\CS 408-term project-Fall22\Computer-Networks-Project\server\server\obj\Debug\net6.0-windows\server.pdb
 C:\Users\rebah\Desktop\CS_S03E02\CS 408\CS 408-term project-Fall22\Computer-Networks-Project\server\server\obj\Debug\net6.0-windows\server.genruntimeconfig.cache
 C:\Users\rebah\Desktop\CS_S03E02\CS 408\CS 408-term project-Fall22\Computer-Networks-Project\server\server\obj\Debug\net6.0-windows\ref\server.dll
+C:\Users\basak\OneDrive\Belgeler\GitHub\Computer-Networks-Project\server\server\bin\Debug\net6.0-windows\server.exe
+C:\Users\basak\OneDrive\Belgeler\GitHub\Computer-Networks-Project\server\server\bin\Debug\net6.0-windows\server.deps.json
+C:\Users\basak\OneDrive\Belgeler\GitHub\Computer-Networks-Project\server\server\bin\Debug\net6.0-windows\server.runtimeconfig.json
+C:\Users\basak\OneDrive\Belgeler\GitHub\Computer-Networks-Project\server\server\bin\Debug\net6.0-windows\server.dll
+C:\Users\basak\OneDrive\Belgeler\GitHub\Computer-Networks-Project\server\server\bin\Debug\net6.0-windows\server.pdb
+C:\Users\basak\OneDrive\Belgeler\GitHub\Computer-Networks-Project\server\server\obj\Debug\net6.0-windows\server.csproj.AssemblyReference.cache
+C:\Users\basak\OneDrive\Belgeler\GitHub\Computer-Networks-Project\server\server\obj\Debug\net6.0-windows\server.Form1.resources
+C:\Users\basak\OneDrive\Belgeler\GitHub\Computer-Networks-Project\server\server\obj\Debug\net6.0-windows\server.csproj.GenerateResource.cache
+C:\Users\basak\OneDrive\Belgeler\GitHub\Computer-Networks-Project\server\server\obj\Debug\net6.0-windows\server.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\basak\OneDrive\Belgeler\GitHub\Computer-Networks-Project\server\server\obj\Debug\net6.0-windows\server.AssemblyInfoInputs.cache
+C:\Users\basak\OneDrive\Belgeler\GitHub\Computer-Networks-Project\server\server\obj\Debug\net6.0-windows\server.AssemblyInfo.cs
+C:\Users\basak\OneDrive\Belgeler\GitHub\Computer-Networks-Project\server\server\obj\Debug\net6.0-windows\server.csproj.CoreCompileInputs.cache
+C:\Users\basak\OneDrive\Belgeler\GitHub\Computer-Networks-Project\server\server\obj\Debug\net6.0-windows\server.dll
+C:\Users\basak\OneDrive\Belgeler\GitHub\Computer-Networks-Project\server\server\obj\Debug\net6.0-windows\refint\server.dll
+C:\Users\basak\OneDrive\Belgeler\GitHub\Computer-Networks-Project\server\server\obj\Debug\net6.0-windows\server.pdb
+C:\Users\basak\OneDrive\Belgeler\GitHub\Computer-Networks-Project\server\server\obj\Debug\net6.0-windows\server.genruntimeconfig.cache
+C:\Users\basak\OneDrive\Belgeler\GitHub\Computer-Networks-Project\server\server\obj\Debug\net6.0-windows\ref\server.dll
